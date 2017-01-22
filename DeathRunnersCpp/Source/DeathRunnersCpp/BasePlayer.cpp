@@ -11,32 +11,22 @@
 ABasePlayer::ABasePlayer()
 {
 	GetSprite()->SetIsReplicated(true);
-	//OnComponentBeginOverlap.AddDynamic(this, &APickup::OnPickup);
-	//OnActorBeginOverlap.AddDynamic(this, &ABasePlayer::CheckCollision);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Normal"));
+	FallingTime = FTimerHandle();
 }
 
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
-	// Note: the 'Jump' action and the 'MoveRight' axis are bound to actual keys/buttons/sticks in DefaultInput.ini (editable from Project Settings..Input)
-	if(!IsOutOfControl)
-	{ 
-		playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
-		playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
-		playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::Smash);
-	}
-	/*
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &ADeathRunnersCppCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &ADeathRunnersCppCharacter::TouchStopped);*/
+	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
+	//playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
+	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::Smash);
 }
 
-void ABasePlayer::Jump()
-{
-	IsJumping = true;
-	ACharacter::Jump();
-	IsJumping = false;
-}
+//void ABasePlayer::Jump()
+//{
+//	ACharacter::Jump();
+//}
 
 void ABasePlayer::MoveRightOrLeft(float value)
 {
@@ -48,45 +38,49 @@ void ABasePlayer::MoveRightOrLeft(float value)
 
 void ABasePlayer::Smash()
 {
-	if (CanSmash && IsJumping)
+	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)//da aggiungere controllo isjumping
 	{
 		if (PlayerToSmash != nullptr)
 		{
 			PlayerToSmash->StartFalling();
-			PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
+			UE_LOG(LogTemp, Warning, TEXT("OK"));
+			StartFalling();
+			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+			//PlayerToSmash->AddMovementInput(FVector(0.0f, 0.0f, 1.0f), 100, true);
+			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
 		}
 	}
 }
 
 void ABasePlayer::StartFalling()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Start"));
 	IsOutOfControl = true;
 	IsFalling = true;
-	GetWorld()->GetTimerManager().SetTimer(FallingTime, &ABasePlayer::StopFalling, FallingTimeRate, false);
-	//GetWorld()->GetTimerManager().SetTimer(FallingTime, other, &ABasePlayer::StopFalling, FallingTimeRate, false);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+	GetWorld()->GetTimerManager().SetTimer(FallingTime,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Stop"));
 	IsOutOfControl = false;
 	IsFalling = false;
-	//GetWorld()->GetTimerManager().SetTimer(FallingTime, other, &ABasePlayer::StopFalling, FallingTimeRate, false);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Normal"));
 }
-
-/*GetWorld()->GetTimerManager().SetTimer(FallingTime, this, &ASBombActor::StopFalling, MaxFuzeTime, false);*/
 
 void ABasePlayer::SpecialAbility()
 {
 
 }
 
-void ABasePlayer::SetCanSmashTrue(class AActor* other)
-{
-	/*if (other->IsA<APaperCharacter*>())
-	{
-		CanSmash = true;
-	}*/
-}
+//void ABasePlayer::SetCanSmashTrue(class AActor* other)
+//{
+//	/*if (other->IsA<APaperCharacter*>())
+//	{
+//		CanSmash = true;
+//	}*/
+//}
 
 //void ABasePlayer::SetCanSmashFalse(class AActor* other)
 //{
@@ -95,10 +89,13 @@ void ABasePlayer::SetCanSmashTrue(class AActor* other)
 
 void ABasePlayer::UpdateAnimation()
 {
+	const FVector PlayerVelocity = GetVelocity();
+	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
+	
 	UPaperFlipbook* DesiredAnimation;
-	if (IsJumping)
+	if (PlayerSpeedSqr > 0.0f)
 	{
-		DesiredAnimation = RunningAnimation;
+		DesiredAnimation = JumpingAnimation;
 	}
 	else if (IsFalling)
 	{

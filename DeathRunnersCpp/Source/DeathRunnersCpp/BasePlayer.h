@@ -55,12 +55,12 @@ protected:
 
 	void StopFalling();
 
-	void SetCanSmashTrue(class AActor* otherActor);
+	//void SetCanSmashTrue(class AActor* otherActor);
 
-	void SetCanSmashFalse(class AActor* otherActor);
+	//void SetCanSmashFalse(class AActor* otherActor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* RunningAnimation;
+		class UPaperFlipbook* JumpingAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* IdleAnimation;
@@ -70,7 +70,7 @@ protected:
 
 	void Smash();
 
-	void Jump();
+	//void Jump();
 
 	virtual void SpecialAbility();
 
@@ -81,7 +81,6 @@ protected:
 	bool IsJumping;
 
 	bool IsFalling;
-
 	
 	bool IsOutOfControl = false;
 };
