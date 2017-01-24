@@ -42,8 +42,7 @@ void ABasePlayer::Smash()
 	{
 		if (PlayerToSmash != nullptr)
 		{
-			PlayerToSmash->StartFalling();
-			UE_LOG(LogTemp, Warning, TEXT("OK"));
+			//PlayerToSmash->StartFalling();
 			StartFalling();
 			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 			//PlayerToSmash->AddMovementInput(FVector(0.0f, 0.0f, 1.0f), 100, true);
@@ -55,9 +54,11 @@ void ABasePlayer::Smash()
 void ABasePlayer::StartFalling()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Start"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+	//FName s = GetCapsuleComponent()->GetCollisionProfileName();
+	//UE_LOG(LogTemp, Warning, TEXT("Settata %s"), s.ToString() );
 	IsOutOfControl = true;
 	IsFalling = true;
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	GetWorld()->GetTimerManager().SetTimer(FallingTime,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
@@ -89,6 +90,10 @@ void ABasePlayer::SpecialAbility()
 
 void ABasePlayer::UpdateAnimation()
 {
+	/*if (AutoJump)
+	{
+		ACharacter::Jump();
+	}*/
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	
@@ -115,7 +120,7 @@ void ABasePlayer::UpdateAnimation()
 void ABasePlayer::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-
+	
 	UpdateCharacter();
 }
 

@@ -44,6 +44,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		ABasePlayer* PlayerToSmash = nullptr;
 
+	//DEBUG
+	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		bool AutoJump = false;*/
+
 
 protected:
 
