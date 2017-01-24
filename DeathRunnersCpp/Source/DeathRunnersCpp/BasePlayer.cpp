@@ -11,19 +11,22 @@
 ABasePlayer::ABasePlayer()
 {
 	GetSprite()->SetIsReplicated(true);
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Normal"));
+	FallingTime = FTimerHandle();
 }
 
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
-	// Note: the 'Jump' action and the 'MoveRight' axis are bound to actual keys/buttons/sticks in DefaultInput.ini (editable from Project Settings..Input)
-	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
-	/*
-	PlayerInputComponent->BindAction("Jump", IE_Released, this, &ACharacter::StopJumping);
-
-	PlayerInputComponent->BindTouch(IE_Pressed, this, &ADeathRunnersCppCharacter::TouchStarted);
-	PlayerInputComponent->BindTouch(IE_Released, this, &ADeathRunnersCppCharacter::TouchStopped);*/
+	//playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
+	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
+	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::Smash);
 }
+
+//void ABasePlayer::Jump()
+//{
+//	ACharacter::Jump();
+//}
 
 void ABasePlayer::MoveRightOrLeft(float value)
 {
@@ -33,22 +36,81 @@ void ABasePlayer::MoveRightOrLeft(float value)
 	AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
 }
 
-void ABasePlayer::Smash(ABasePlayer other)
+void ABasePlayer::Smash()
 {
+	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)//da aggiungere controllo isjumping
+	{
+		if (PlayerToSmash != nullptr)
+		{
+			//PlayerToSmash->StartFalling();
+			StartFalling();
+			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+			//PlayerToSmash->AddMovementInput(FVector(0.0f, 0.0f, 1.0f), 100, true);
+			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
+		}
+	}
+}
+
+void ABasePlayer::StartFalling()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Start"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+	//FName s = GetCapsuleComponent()->GetCollisionProfileName();
+	//UE_LOG(LogTemp, Warning, TEXT("Settata %s"), s.ToString() );
+	IsOutOfControl = true;
+	IsFalling = true;
+	GetWorld()->GetTimerManager().SetTimer(FallingTime,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
+}
+
+void ABasePlayer::StopFalling()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Stop"));
+	IsOutOfControl = false;
+	IsFalling = false;
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Normal"));
 }
 
 void ABasePlayer::SpecialAbility()
 {
-	
+
 }
+
+//void ABasePlayer::SetCanSmashTrue(class AActor* other)
+//{
+//	/*if (other->IsA<APaperCharacter*>())
+//	{
+//		CanSmash = true;
+//	}*/
+//}
+
+//void ABasePlayer::SetCanSmashFalse(class AActor* other)
+//{
+//	CanSmash = true;
+//}
 
 void ABasePlayer::UpdateAnimation()
 {
+	/*if (AutoJump)
+	{
+		ACharacter::Jump();
+	}*/
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-
-	// Are we moving or standing still?
-	UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
+	
+	UPaperFlipbook* DesiredAnimation;
+	if (PlayerSpeedSqr > 0.0f)
+	{
+		DesiredAnimation = JumpingAnimation;
+	}
+	else if (IsFalling)
+	{
+		DesiredAnimation = FallingAnimation;
+	}
+	else
+	{
+		DesiredAnimation = IdleAnimation;
+	}
+	//UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
@@ -58,8 +120,14 @@ void ABasePlayer::UpdateAnimation()
 void ABasePlayer::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
-
+	
 	UpdateCharacter();
+}
+
+void ABasePlayer::BeginPlay()
+{
+	Super::BeginPlay();
+	
 }
 
 void ABasePlayer::UpdateCharacter()
