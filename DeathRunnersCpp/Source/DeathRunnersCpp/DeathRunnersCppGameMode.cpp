@@ -3,9 +3,11 @@
 #include "DeathRunnersCpp.h"
 #include "DeathRunnersCppGameMode.h"
 #include "DeathRunnersCppCharacter.h"
+#include "BasePlayer.h"
 
 ADeathRunnersCppGameMode::ADeathRunnersCppGameMode()
 {
 	// set default pawn class to our character
-	DefaultPawnClass = ADeathRunnersCppCharacter::StaticClass();	
+	DefaultPawnClass = ABasePlayer::StaticClass();
+	//DefaultPawnClass = ADeathRunnersCppCharacter::StaticClass();	
 }
