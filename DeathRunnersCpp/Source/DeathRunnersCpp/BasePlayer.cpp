@@ -10,8 +10,9 @@
 
 ABasePlayer::ABasePlayer()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Costruttore  "));
 	GetSprite()->SetIsReplicated(true);
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Normal"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	FallingTime = FTimerHandle();
 }
 
@@ -42,9 +43,9 @@ void ABasePlayer::Smash()
 	{
 		if (PlayerToSmash != nullptr)
 		{
-			//PlayerToSmash->StartFalling();
-			StartFalling();
+			//StartFalling();
 			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+			PlayerToSmash->StartFalling();
 			//PlayerToSmash->AddMovementInput(FVector(0.0f, 0.0f, 1.0f), 100, true);
 			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
 		}
@@ -67,7 +68,7 @@ void ABasePlayer::StopFalling()
 	UE_LOG(LogTemp, Warning, TEXT("Stop"));
 	IsOutOfControl = false;
 	IsFalling = false;
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Normal"));
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 }
 
 void ABasePlayer::SpecialAbility()
@@ -149,6 +150,15 @@ void ABasePlayer::UpdateCharacter()
 		{
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
+	}
+
+	if (PlayerVelocity.Z>0.0f)
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));
+	}
+	else if(!IsFalling)
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	}
 }
 
