@@ -74,7 +74,9 @@ protected:
 
 	void Smash();
 
-	//void Jump();
+	void SmashDebug();
+
+	void Jump();
 
 	virtual void SpecialAbility();
 
