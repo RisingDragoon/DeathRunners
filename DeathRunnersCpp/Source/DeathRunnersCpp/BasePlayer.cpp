@@ -173,7 +173,7 @@ void ABasePlayer::UpdateCharacter()
 
 	if (PlayerVelocity.Z>0.0f)
 	{
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("JumpingPawn"));
 	}
 	else if(!IsFalling)
 	{
