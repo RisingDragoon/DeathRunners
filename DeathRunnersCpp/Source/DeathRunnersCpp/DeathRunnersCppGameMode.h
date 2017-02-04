@@ -15,4 +15,5 @@ class ADeathRunnersCppGameMode : public AGameModeBase
 	GENERATED_BODY()
 public:
 	ADeathRunnersCppGameMode();
+	virtual void BeginPlay() override;
 };

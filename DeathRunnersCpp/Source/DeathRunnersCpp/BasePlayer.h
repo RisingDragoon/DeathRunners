@@ -23,16 +23,13 @@ public:
 
 	void UpdateCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float MaxSmashCharge = 100.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float SmashChargeSpeed = 10.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float AbilityCooldown = 10.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		FTimerHandle FallingTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)

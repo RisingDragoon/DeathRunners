@@ -8,6 +8,11 @@
 ADeathRunnersCppGameMode::ADeathRunnersCppGameMode()
 {
 	// set default pawn class to our character
-	DefaultPawnClass = ABasePlayer::StaticClass();
+	//DefaultPawnClass = ABasePlayer::StaticClass();
 	//DefaultPawnClass = ADeathRunnersCppCharacter::StaticClass();	
+}
+void ADeathRunnersCppGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+	UGameplayStatics::CreatePlayer(GetWorld(), -1, true);
 }

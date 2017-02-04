@@ -5,7 +5,7 @@
 
 #include "PaperFlipbookComponent.h"
 #include "Components/TextRenderComponent.h"
-
+#include "BasePlatform.h"
 
 
 ABasePlayer::ABasePlayer()
@@ -62,11 +62,13 @@ void ABasePlayer::Smash()
 	{
 		if (PlayerToSmash != nullptr)
 		{
+			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
+			PlayerToSmash->StartFalling();
+			//LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
 			//StartFalling();
 			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
-			PlayerToSmash->StartFalling();
 			//PlayerToSmash->AddMovementInput(FVector(0.0f, 0.0f, 1.0f), 100, true);
-			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
+			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 100.0f), false, false);
 		}
 	}
 }
@@ -77,6 +79,8 @@ void ABasePlayer::StartFalling()
 	IsOutOfControl = true;
 	IsFalling = true;
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+	//LaunchCharacter(FVector(0.0f, 0.0f, -100.0f), false, false);
+	LaunchCharacter(FVector(10000.0f, 0.0f, 0.0f), false, false);
 	//FName s = GetCapsuleComponent()->GetCollisionProfileName();
 	//UE_LOG(LogTemp, Warning, TEXT("Settata %s"), s.ToString() );
 	GetWorld()->GetTimerManager().SetTimer(FallingTime,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
@@ -171,14 +175,17 @@ void ABasePlayer::UpdateCharacter()
 		}
 	}
 
-	if (PlayerVelocity.Z>0.0f)
+	if (PlayerVelocity.Z > 0.0f)
 	{
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("JumpingPawn"));
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));
 	}
-	else if(!IsFalling)
+	else if (!IsFalling)
 	{
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+		TArray<AActor*> overlappingPlatforms;
+		GetOverlappingActors(overlappingPlatforms, TSubclassOf<ABasePlatform>());
+
+		if (overlappingPlatforms.Num() == 0)
+			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	}
 }
-
 
