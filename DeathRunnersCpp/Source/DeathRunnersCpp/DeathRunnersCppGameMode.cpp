@@ -14,5 +14,5 @@ ADeathRunnersCppGameMode::ADeathRunnersCppGameMode()
 void ADeathRunnersCppGameMode::BeginPlay()
 {
 	Super::BeginPlay();
-	UGameplayStatics::CreatePlayer(GetWorld(), -1, true);
+	
 }
