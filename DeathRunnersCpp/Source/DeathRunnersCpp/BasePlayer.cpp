@@ -22,7 +22,7 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
 	//playerInputComponent->BindAction("Jump", IE_Pressed, this, &ACharacter::Jump);
 	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::Smash);
-	playerInputComponent->BindAction("SmashDebug", IE_Pressed, this, &ABasePlayer::SmashDebug);
+	//playerInputComponent->BindAction("SmashDebug", IE_Pressed, this, &ABasePlayer::SmashDebug);
 }
 
 void ABasePlayer::Jump()
@@ -41,29 +41,14 @@ void ABasePlayer::MoveRightOrLeft(float value)
 	}
 }
 
-void ABasePlayer::SmashDebug()
-{
-	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)//da aggiungere controllo isjumping
-	{
-		if (PlayerToSmash != nullptr)
-		{
-			StartFalling();
-			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
-			//PlayerToSmash->StartFalling();
-			//PlayerToSmash->AddMovementInput(FVector(0.0f, 0.0f, 1.0f), 100, true);
-			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
-		}
-	}
-}
-
 void ABasePlayer::Smash()
 {
-	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)//da aggiungere controllo isjumping
+	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
 		if (PlayerToSmash != nullptr)
 		{
-			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
 			PlayerToSmash->StartFalling();
+			//PlayerToSmash->LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
 			//LaunchCharacter(FVector(0.0f, 0.0f, 1000.0f), false, false);
 			//StartFalling();
 			//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
@@ -79,11 +64,11 @@ void ABasePlayer::StartFalling()
 	IsOutOfControl = true;
 	IsFalling = true;
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
-	//LaunchCharacter(FVector(0.0f, 0.0f, -100.0f), false, false);
-	LaunchCharacter(FVector(10000.0f, 0.0f, 0.0f), false, false);
+	LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
+	GetWorld()->GetTimerManager().SetTimer(FallingTime,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
+	//LaunchCharacter(FVector(10000.0f, 0.0f, 0.0f), false, false);
 	//FName s = GetCapsuleComponent()->GetCollisionProfileName();
 	//UE_LOG(LogTemp, Warning, TEXT("Settata %s"), s.ToString() );
-	GetWorld()->GetTimerManager().SetTimer(FallingTime,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
@@ -99,25 +84,8 @@ void ABasePlayer::SpecialAbility()
 
 }
 
-//void ABasePlayer::SetCanSmashTrue(class AActor* other)
-//{
-//	/*if (other->IsA<APaperCharacter*>())
-//	{
-//		CanSmash = true;
-//	}*/
-//}
-
-//void ABasePlayer::SetCanSmashFalse(class AActor* other)
-//{
-//	CanSmash = true;
-//}
-
 void ABasePlayer::UpdateAnimation()
 {
-	/*if (AutoJump)
-	{
-		ACharacter::Jump();
-	}*/
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	
@@ -134,7 +102,6 @@ void ABasePlayer::UpdateAnimation()
 	{
 		DesiredAnimation = IdleAnimation;
 	}
-	//UPaperFlipbook* DesiredAnimation = (PlayerSpeedSqr > 0.0f) ? RunningAnimation : IdleAnimation;
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
 		GetSprite()->SetFlipbook(DesiredAnimation);
@@ -146,6 +113,7 @@ void ABasePlayer::Tick(float deltaSeconds)
 	Super::Tick(deltaSeconds);
 	
 	UpdateCharacter();
+	IsJumping = GetVelocity().SizeSquared() > 0.0f;
 }
 
 void ABasePlayer::BeginPlay()

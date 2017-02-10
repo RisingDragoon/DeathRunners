@@ -30,6 +30,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float AbilityCooldown = 10.0;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		float SmashForce = 100.0;
+
 		FTimerHandle FallingTime;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
@@ -71,7 +74,7 @@ protected:
 
 	void Smash();
 
-	void SmashDebug();
+	//void SmashDebug();
 
 	void Jump();
 
