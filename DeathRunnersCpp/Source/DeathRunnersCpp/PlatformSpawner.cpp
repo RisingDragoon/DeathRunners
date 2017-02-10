@@ -4,33 +4,63 @@
 #include "PlatformSpawner.h"
 #include "BasePlatform.h"
 
-// Sets default values
 APlatformSpawner::APlatformSpawner()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
-}
+	PrimaryActorTick.bCanEverTick = true;
 
-// Called when the game starts or when spawned
-void APlatformSpawner::BeginPlay()
-{
-	Super::BeginPlay();
+	sceneComponent = CreateDefaultSubobject<USceneComponent>( TEXT( "Platform Spawner" ) );
+	RootComponent = sceneComponent;
+
+	// Popola l'array con 5 punti di spawn a x = -512, -256, 0, 256 e 512.
+	for ( int x = -512; x <= 512; x += 256 )
+	{
+		spawnPoints.Add( FVector( x, 0.0, 0.0 ) );
+	}
 
 	/*for ( auto item : spawnPoints )
 	{
 		UE_LOG( LogTemp, Warning, TEXT( "I detected a spawner" ) );
 	}*/
 
-	GetWorldTimerManager().SetTimer( spawnTimer, this, &APlatformSpawner::SpawnPlatform, spawnDelay, true );
+	spawnPatterns = {
+		{ true, false, false, true, true },
+		{ true, true, false, false, true },
+		{ false, false, true, true, true },
+		{ true, true, true, false, false },
+		{ true, false, true, false, true },
+		{ true, true, false, true, true },
+		{ false, true, true, true, false },
+		{ false, false, false, true, true },
+		{ false, false, true, true, false },
+		{ false, true, true, false, false },
+		{ true, true, false, false, false },
+		{ false, false, false, false, true },
+		{ false, false, false, true, false },
+		{ false, false, true, false, false },
+		{ false, true, false, false, false },
+		{ true, false, false, false, false }
+	};
 }
 
-// Called every frame
+void APlatformSpawner::BeginPlay()
+{
+	Super::BeginPlay();
+
+	nextSpawnZ = GetActorLocation().Z;
+}
+
 void APlatformSpawner::Tick( float DeltaTime )
 {
 	Super::Tick( DeltaTime );
+
+	if ( GetActorLocation().Z > nextSpawnZ )
+	{
+		SpawnPlatforms( nextSpawnZ );
+		nextSpawnZ += spawningGap;
+	}
 }
 
-void APlatformSpawner::SpawnPlatform()
+void APlatformSpawner::SpawnPlatforms( float z )
 {
 	UWorld* const world = GetWorld();
 
@@ -40,11 +70,19 @@ void APlatformSpawner::SpawnPlatform()
 		params.Owner = this;
 		params.Instigator = Instigator;
 
-		// Prende un punto casuale dove spawnare la piattaforma. Non sarà così nel gioco.
-		int i = FMath::RandRange( 0, spawnPoints.Num() - 1 );
-		FVector spawnLocation = GetActorLocation() + spawnPoints[i];
+		// Seleziona un pattern casuale con cui spawnare le piattaforme.
+		int i = FMath::RandRange( 0, spawnPatterns.Num() - 1 );
 
-		// Seleziona solo la prima piattaforma dell'array. Non sarà così nel gioco.
-		world->SpawnActor<ABasePlatform>( platformTypes[0], spawnLocation, FRotator::ZeroRotator, params );
+		// Scorre il pattern e spawna le piattaforme.
+		for ( int col = 0; col < spawnPatterns[i].Num(); col++ )
+		{
+			if ( spawnPatterns[i][col] )
+			{
+				FVector spawnLocation = FVector( 0.0, 0.0, z ) + spawnPoints[col];
+
+				// Seleziona solo la prima piattaforma dell'array. Non sarà così nel gioco.
+				world->SpawnActor<ABasePlatform>( platformTypes[0], spawnLocation, FRotator::ZeroRotator, params );
+			}
+		}
 	}
 }

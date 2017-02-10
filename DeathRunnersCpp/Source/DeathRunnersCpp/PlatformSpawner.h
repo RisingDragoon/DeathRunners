@@ -22,16 +22,18 @@ public:
 	virtual void Tick( float DeltaSeconds ) override;
 
 private:
-	UPROPERTY ( EditAnywhere, Category = "Spawn" )
-	TArray<FVector> spawnPoints;
+	UPROPERTY( VisibleAnywhere )
+	USceneComponent* sceneComponent;
 
 	UPROPERTY( EditAnywhere, Category = "Spawn" )
 	TArray<TSubclassOf<class ABasePlatform>> platformTypes;
 
-	FTimerHandle spawnTimer;
-
 	UPROPERTY( EditAnywhere, Category = "Spawn" )
-	float spawnDelay;
+	float spawningGap;
 
-	void SpawnPlatform();
+	TArray<FVector> spawnPoints;
+	float nextSpawnZ;
+	TArray<TArray<bool>> spawnPatterns;
+
+	void SpawnPlatforms( float z );
 };
