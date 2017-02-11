@@ -90,13 +90,13 @@ void ABasePlayer::UpdateAnimation()
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 	
 	UPaperFlipbook* DesiredAnimation;
-	if (PlayerSpeedSqr > 0.0f)
-	{
-		DesiredAnimation = JumpingAnimation;
-	}
-	else if (IsFalling)
+	if (IsFalling)
 	{
 		DesiredAnimation = FallingAnimation;
+	}
+	else if (PlayerSpeedSqr > 0.0f)
+	{
+		DesiredAnimation = JumpingAnimation;
 	}
 	else
 	{
