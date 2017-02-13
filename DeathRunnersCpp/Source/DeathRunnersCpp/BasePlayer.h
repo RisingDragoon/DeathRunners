@@ -23,17 +23,13 @@ public:
 
 	void UpdateCharacter();
 
-		float MaxSmashCharge = 100.0;
-
-		float SmashChargeSpeed = 10.0;
-
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float AbilityCooldown = 10.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float SmashForce = 100.0;
 
-		FTimerHandle FallingTime;
+		FTimerHandle Timer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float FallingTimeRate = 1.0;
@@ -44,24 +40,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		ABasePlayer* PlayerToSmash = nullptr;
 
-	//DEBUG
-	/*UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		bool AutoJump = false;*/
-
-
 protected:
 
-	void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
-	//bool CheckRangeSmash();
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	void StartFalling();
 
 	void StopFalling();
-
-	//void SetCanSmashTrue(class AActor* otherActor);
-
-	//void SetCanSmashFalse(class AActor* otherActor);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* JumpingAnimation;
@@ -74,11 +59,13 @@ protected:
 
 	void Smash();
 
-	//void SmashDebug();
-
-	void Jump();
+	virtual void Jump() override;
 
 	virtual void SpecialAbility();
+
+	virtual void StartCooldown();
+
+	virtual void StopCooldown();
 
 	void MoveRightOrLeft(float value);
 
@@ -89,4 +76,7 @@ protected:
 	bool IsFalling;
 	
 	bool IsOutOfControl = false;
+
+	bool SpecialAbilityIsReady = true;
+
 };
