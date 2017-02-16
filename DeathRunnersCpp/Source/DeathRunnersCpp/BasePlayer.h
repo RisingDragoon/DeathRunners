@@ -40,6 +40,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		ABasePlayer* PlayerToSmash = nullptr;
 
+	void SetPlayerToSmash();
+
+	void ResetPlayerToSmash();
+
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;

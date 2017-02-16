@@ -12,6 +12,7 @@ ABasePlayer::ABasePlayer()
 	GetSprite()->SetIsReplicated(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	Timer = FTimerHandle();
+	//GetCapsuleComponent()->OnComponentBeginOverlap.AddUnique(&ABasePlayer::SetPlayerToSmash);
 }
 
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
@@ -66,6 +67,16 @@ void ABasePlayer::StopFalling()
 void ABasePlayer::SpecialAbility()
 {
 
+}
+
+void ABasePlayer::SetPlayerToSmash()
+{
+
+}
+
+void ABasePlayer::ResetPlayerToSmash()
+{
+	
 }
 
 void ABasePlayer::StartCooldown()

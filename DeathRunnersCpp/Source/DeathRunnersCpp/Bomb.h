@@ -20,9 +20,13 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float Countdown = 3.0;
 
-private:
+	UFUNCTION(BlueprintCallable, Category = "Funzioni")
 	void StartTimer();
 
+private:
+
 	void Explode();
+
+	FHitResult DestroyPlatformDown();
 	
 };
