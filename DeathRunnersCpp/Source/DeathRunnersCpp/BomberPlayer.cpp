@@ -13,5 +13,5 @@ void ABomberPlayer::SetupPlayerInputComponent(class UInputComponent* playerInput
 void ABomberPlayer::SpecialAbility()
 {
 	FActorSpawnParameters SpawnParams;
-	GetWorld()->SpawnActor<ABomb>(GetActorLocation(), GetActorRotation(), SpawnParams);
+	//GetWorld()->SpawnActor<ABomb>(GetActorLocation(), GetActorRotation(), SpawnParams);
 }

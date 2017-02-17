@@ -5,6 +5,7 @@
 #include "PaperFlipbookComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "BasePlatform.h"
+#include <string>
 
 
 ABasePlayer::ABasePlayer()
@@ -41,10 +42,7 @@ void ABasePlayer::Smash()
 {
 	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
-		if (PlayerToSmash != nullptr)
-		{
-			PlayerToSmash->StartFalling();
-		}
+		PlayerToSmash->StartFalling();
 	}
 }
 
