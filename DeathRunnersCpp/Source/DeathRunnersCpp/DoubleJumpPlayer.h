@@ -16,6 +16,8 @@ class DEATHRUNNERSCPP_API ADoubleJumpPlayer : public ABasePlayer
 public:
 	ADoubleJumpPlayer();
 
+	virtual void Tick(float DeltaSeconds) override;
+
 	void BeginPlay() override;
 
 	void Jump() override;

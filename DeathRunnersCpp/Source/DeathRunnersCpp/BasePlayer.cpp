@@ -42,8 +42,17 @@ void ABasePlayer::Smash()
 {
 	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
-		PlayerToSmash->StartFalling();
+		if (PlayerToSmash->IsJumping)
+		{
+			PlayerToSmash->StartFalling();
+		}
 	}
+}
+
+void ABasePlayer::EnableSpecialAbility()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Abilita Pronta"));
+	SpecialAbilityIsReady = true;
 }
 
 void ABasePlayer::StartFalling()
@@ -77,17 +86,6 @@ void ABasePlayer::ResetPlayerToSmash()
 	
 }
 
-void ABasePlayer::StartCooldown()
-{
-	SpecialAbilityIsReady = false;
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopCooldown, AbilityCooldown, false);
-}
-
-void ABasePlayer::StopCooldown()
-{
-	SpecialAbilityIsReady = true;
-}
-
 void ABasePlayer::UpdateAnimation()
 {
 	const FVector PlayerVelocity = GetVelocity();
@@ -114,22 +112,19 @@ void ABasePlayer::UpdateAnimation()
 
 void ABasePlayer::Tick(float deltaSeconds)
 {
-	Super::Tick(deltaSeconds);
-	
+	Super::Tick(deltaSeconds);	
 	UpdateCharacter();
 	IsJumping = GetVelocity().SizeSquared() > 0.0f;
 }
 
 void ABasePlayer::BeginPlay()
 {
-	Super::BeginPlay();
-	
+	Super::BeginPlay();	
 }
 
 void ABasePlayer::UpdateCharacter()
 {
 	UpdateAnimation();
-
 	const FVector PlayerVelocity = GetVelocity();
 	float TravelDirection = PlayerVelocity.X;
 	if (Controller != nullptr)
@@ -144,7 +139,6 @@ void ABasePlayer::UpdateCharacter()
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 	}
-
 	if (PlayerVelocity.Z > 0.0f)
 	{
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));

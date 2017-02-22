@@ -6,12 +6,17 @@
 
 void ABomberPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
+	UE_LOG(LogTemp, Warning, TEXT("input setup"));
 	Super::SetupPlayerInputComponent(playerInputComponent);
-	playerInputComponent->BindAction("Bomb", IE_Pressed, this, &ABomberPlayer::SpecialAbility);
+	playerInputComponent->BindAction("Bomb", IE_Released, this, &ABomberPlayer::SpecialAbility);
 }
 
 void ABomberPlayer::SpecialAbility()
 {
-	FActorSpawnParameters SpawnParams;
-	//GetWorld()->SpawnActor<ABomb>(GetActorLocation(), GetActorRotation(), SpawnParams);
+	if (SpecialAbilityIsReady)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Usata bomba"));
+		SpecialAbilityIsReady = false;
+		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+	}
 }

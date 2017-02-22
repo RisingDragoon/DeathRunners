@@ -44,6 +44,10 @@ public:
 
 	void ResetPlayerToSmash();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		bool SpecialAbilityIsReady = true;
+
+	void EnableSpecialAbility();
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -63,13 +67,10 @@ protected:
 
 	void Smash();
 
+
 	virtual void Jump() override;
 
 	virtual void SpecialAbility();
-
-	virtual void StartCooldown();
-
-	virtual void StopCooldown();
 
 	void MoveRightOrLeft(float value);
 
@@ -81,6 +82,6 @@ protected:
 	
 	bool IsOutOfControl = false;
 
-	bool SpecialAbilityIsReady = true;
+	
 
 };
