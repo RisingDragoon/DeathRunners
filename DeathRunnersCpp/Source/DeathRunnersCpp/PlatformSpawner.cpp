@@ -71,17 +71,18 @@ void APlatformSpawner::SpawnPlatforms( float z )
 		params.Instigator = Instigator;
 
 		// Seleziona un pattern casuale con cui spawnare le piattaforme.
-		int i = FMath::RandRange( 0, spawnPatterns.Num() - 1 );
+		int randPattern = FMath::RandRange( 0, spawnPatterns.Num() - 1 );
 
 		// Scorre il pattern e spawna le piattaforme.
-		for ( int col = 0; col < spawnPatterns[i].Num(); col++ )
+		for ( int col = 0; col < spawnPatterns[randPattern].Num(); col++ )
 		{
-			if ( spawnPatterns[i][col] )
+			if ( spawnPatterns[randPattern][col] )
 			{
 				FVector spawnLocation = FVector( 0.0, 0.0, z ) + spawnPoints[col];
 
-				// Seleziona solo la prima piattaforma dell'array. Non sarà così nel gioco.
-				world->SpawnActor<ABasePlatform>( platformTypes[0], spawnLocation, FRotator::ZeroRotator, params );
+				// Seleziona una piattaforma casuale da spawnare. Soluzione temporanea.
+				int randPlatform = FMath::RandRange( 0, platformTypes.Num() - 1 );
+				world->SpawnActor<ABasePlatform>( platformTypes[randPlatform], spawnLocation, FRotator::ZeroRotator, params );
 			}
 		}
 	}

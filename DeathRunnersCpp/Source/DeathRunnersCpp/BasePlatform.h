@@ -5,9 +5,14 @@
 #include "PaperSpriteActor.h"
 #include "BasePlatform.generated.h"
 
-/**
- * 
- */
+UENUM( BlueprintType )
+enum class EPlatformType : uint8
+{
+	Standard,
+	Spikes,
+	Bouncer
+};
+
 UCLASS()
 class DEATHRUNNERSCPP_API ABasePlatform : public APaperSpriteActor
 {
@@ -23,13 +28,13 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaSeconds) override;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleani)
-		bool OneSide = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleani)
-		bool IsThick = true;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleani)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Platform)
 		bool IsDestructible = false;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Booleani)
-		bool IsHarmful = false;
-	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Platform)
+		EPlatformType Type;
+	UPROPERTY( EditAnywhere, BlueprintReadWrite, Category = Platform )
+		float LaunchSpeed;
+
+	UFUNCTION()
+		void OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit );
 };
