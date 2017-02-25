@@ -2,6 +2,7 @@
 
 #include "DeathRunnersCpp.h"
 #include "BasePlatform.h"
+#include "BasePlayer.h"
 
 // Sets default values
 ABasePlatform::ABasePlatform()
@@ -28,16 +29,21 @@ void ABasePlatform::Tick(float DeltaTime)
 
 void ABasePlatform::OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit )
 {
-	ACharacter* HitCharacter = Cast<ACharacter>( OtherActor );
+	ABasePlayer* HitCharacter = Cast<ABasePlayer>( OtherActor );
 
 	if ( HitCharacter != NULL && HitCharacter->GetActorLocation().Z > GetActorLocation().Z + 32.0 )
 	{
+		if (HitCharacter->IsFalling)
+		{
+			HitCharacter->LoseControl();
+		}
+
 		if ( Type == EPlatformType::Spikes )
 		{
-			// UE_LOG( LogTemp, Warning, TEXT( "Someone just got spiked!" ) );
-			FVector Direction = FMath::VRand();
-			FVector LaunchVelocity = FVector( Direction.X, 0.0, Direction.Z ) * LaunchSpeed;
-			HitCharacter->LaunchCharacter( LaunchVelocity, false, false );
+			float Dir = HitCharacter->GetActorLocation().X > GetActorLocation().X ? 1.0 : -1.0;
+			FVector LaunchVelocity = FVector( Dir, 0.0, 0.4 ) * LaunchSpeed;
+			HitCharacter->LoseControl();
+			HitCharacter->LaunchCharacter( LaunchVelocity, true, false );
 		}
 		else if ( Type == EPlatformType::Bouncer )
 		{

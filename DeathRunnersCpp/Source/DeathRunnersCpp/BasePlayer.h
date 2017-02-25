@@ -48,6 +48,11 @@ public:
 		bool SpecialAbilityIsReady = true;
 
 	void EnableSpecialAbility();
+
+	void LoseControl();
+
+	bool IsFalling;
+
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -67,6 +72,7 @@ protected:
 
 	void Smash();
 
+	void RegainControl();
 
 	virtual void Jump() override;
 
@@ -77,11 +83,7 @@ protected:
 	float SmashCharge = 0;
 
 	bool IsJumping;
-
-	bool IsFalling;
 	
 	bool IsOutOfControl = false;
-
-	
 
 };

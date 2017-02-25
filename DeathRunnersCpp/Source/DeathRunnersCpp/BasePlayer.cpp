@@ -59,14 +59,14 @@ void ABasePlayer::StartFalling()
 {
 	IsOutOfControl = true;
 	IsFalling = true;
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+	//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
 	GetWorld()->GetTimerManager().SetTimer(Timer,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
 {
-	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	IsOutOfControl = false;
 	IsFalling = false;
 }
@@ -153,5 +153,16 @@ void ABasePlayer::UpdateCharacter()
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 		}
 	}
+}
+
+void ABasePlayer::RegainControl()
+{
+	IsOutOfControl = false;
+}
+
+void ABasePlayer::LoseControl()
+{
+	IsOutOfControl = true;
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
 }
 
