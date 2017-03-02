@@ -12,7 +12,7 @@ UCLASS()
 class DEATHRUNNERSCPP_API AGunPlayer : public ABasePlayer
 {
 	GENERATED_BODY()
-	
+public:
 	void SpecialAbility() override;
 
 	void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -21,7 +21,10 @@ class DEATHRUNNERSCPP_API AGunPlayer : public ABasePlayer
 
 	void LogY(float value);
 
-	float LastAxisX = 0;
-	float LastAxisY = 0;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		float LastAxisX = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		float LastAxisY = 0;
 
 };

@@ -14,8 +14,8 @@ void AGunPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCom
 }
 void AGunPlayer::SpecialAbility()
 {
-	//if (SpecialAbilityIsReady)
-		if (true)
+	//	if (true)
+	if (SpecialAbilityIsReady)
 	{
 		//TODO: spara
 		if (LastAxisX != 0 || LastAxisY != 0)
@@ -24,7 +24,7 @@ void AGunPlayer::SpecialAbility()
 			FVector location = GetActorLocation();
 			FVector StartTrace = location;
 			FVector EndTrace = location + direzione * 600;
-			DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), false, 0.f, 0, 10.f);
+			DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 10.f);
 
 			UE_LOG(LogTemp, Warning, TEXT("Pistola usata"));
 			SpecialAbilityIsReady = false;
