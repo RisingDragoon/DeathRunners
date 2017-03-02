@@ -51,6 +51,7 @@ public:
 
 	void LoseControl();
 
+
 	bool IsFalling;
 
 protected:

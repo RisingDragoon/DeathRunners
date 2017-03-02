@@ -19,6 +19,7 @@ ABasePlayer::ABasePlayer()
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
+	
 	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
 	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::Smash);
 }
@@ -28,6 +29,7 @@ void ABasePlayer::Jump()
 	Super::Jump();
 
 }
+
 
 void ABasePlayer::MoveRightOrLeft(float value)
 {
