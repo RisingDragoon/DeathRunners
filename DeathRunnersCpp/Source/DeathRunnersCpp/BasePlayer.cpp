@@ -137,7 +137,7 @@ void ABasePlayer::Tick(float deltaSeconds)
 	Super::Tick(deltaSeconds);
 	UpdateCharacter();
 	IsJumping = GetVelocity().SizeSquared() > 0.0f;
-	if (IsCharging)
+	if (IsCharging && SmashForce < MaxSmashForce)
 	{
 		SmashForce += SmashChargeSpeed;
 		UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);

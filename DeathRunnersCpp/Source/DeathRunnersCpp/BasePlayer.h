@@ -59,7 +59,8 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 	//	float SmashCharge = 0;
-
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		float MaxSmashForce = 450;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float SmashChargeSpeed = 10;
 
