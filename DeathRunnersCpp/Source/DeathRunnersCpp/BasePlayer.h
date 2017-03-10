@@ -6,8 +6,8 @@
 #include "BasePlayer.generated.h"
 
 /**
- * 
- */
+*
+*/
 UCLASS()
 class DEATHRUNNERSCPP_API ABasePlayer : public APaperCharacter
 {
@@ -24,12 +24,12 @@ public:
 	void UpdateCharacter();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float AbilityCooldown = 10.0;
+		float AbilityCooldown = 3.0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float SmashForce = 100.0;
+		float SmashForce = 0.0;
 
-		FTimerHandle Timer;
+	FTimerHandle Timer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float FallingTimeRate = 1.0;
@@ -51,8 +51,17 @@ public:
 
 	void LoseControl();
 
+	void ChargeSmash();
 
 	bool IsFalling;
+
+	bool IsCharging;
+
+	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+	//	float SmashCharge = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		float SmashChargeSpeed = 10;
 
 protected:
 
@@ -81,10 +90,9 @@ protected:
 
 	void MoveRightOrLeft(float value);
 
-	float SmashCharge = 0;
 
 	bool IsJumping;
-	
+
 	bool IsOutOfControl = false;
 
 };

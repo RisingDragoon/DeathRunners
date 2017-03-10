@@ -19,51 +19,71 @@ ABasePlayer::ABasePlayer()
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
-	
 	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
-	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::Smash);
+	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ChargeSmash);
+	playerInputComponent->BindAction("Smash", IE_Released, this, &ABasePlayer::Smash);
 }
 
 void ABasePlayer::Jump()
 {
 	Super::Jump();
+	UE_LOG(LogTemp, Warning, TEXT("Salto"));
 
 }
-
+void ABasePlayer::ChargeSmash()
+{
+	IsCharging = true;
+	//SmashForce += SmashChargeSpeed;
+	//UE_LOG(LogTemp, Warning, TEXT("potenza pugno : FORZA %d SPEED %d"),SmashForce, SmashChargeSpeed);
+}
 
 void ABasePlayer::MoveRightOrLeft(float value)
 {
 	UpdateCharacter();
 	if (!IsOutOfControl)
 	{
-		AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
+		if (IsCharging)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Carico e mi muovo di meta"));
+			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value / 2);
+		}
+		else
+		{
+			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
+		}
 	}
 }
 
 void ABasePlayer::Smash()
 {
+	IsCharging = false;
 	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
 		if (PlayerToSmash->IsJumping)
 		{
-			PlayerToSmash->StartFalling();
+			IsOutOfControl = true;
+			IsFalling = true;
+			LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
+			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
+			//PlayerToSmash->StartFalling();
 		}
 	}
+	SmashForce = 0;
 }
 
 void ABasePlayer::EnableSpecialAbility()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Abilita Pronta"));
+	//UE_LOG(LogTemp, Warning, TEXT("Abilita Pronta"));
 	SpecialAbilityIsReady = true;
 }
 
 void ABasePlayer::StartFalling()
 {
+	//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	IsOutOfControl = true;
 	IsFalling = true;
-	//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
-	GetWorld()->GetTimerManager().SetTimer(Timer,this, &ABasePlayer::StopFalling, FallingTimeRate, false);
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
@@ -85,14 +105,14 @@ void ABasePlayer::SetPlayerToSmash()
 
 void ABasePlayer::ResetPlayerToSmash()
 {
-	
+
 }
 
 void ABasePlayer::UpdateAnimation()
 {
 	const FVector PlayerVelocity = GetVelocity();
 	const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
-	
+
 	UPaperFlipbook* DesiredAnimation;
 	if (IsFalling)
 	{
@@ -114,14 +134,19 @@ void ABasePlayer::UpdateAnimation()
 
 void ABasePlayer::Tick(float deltaSeconds)
 {
-	Super::Tick(deltaSeconds);	
+	Super::Tick(deltaSeconds);
 	UpdateCharacter();
 	IsJumping = GetVelocity().SizeSquared() > 0.0f;
+	if (IsCharging)
+	{
+		SmashForce += SmashChargeSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
+	}
 }
 
 void ABasePlayer::BeginPlay()
 {
-	Super::BeginPlay();	
+	Super::BeginPlay();
 }
 
 void ABasePlayer::UpdateCharacter()
