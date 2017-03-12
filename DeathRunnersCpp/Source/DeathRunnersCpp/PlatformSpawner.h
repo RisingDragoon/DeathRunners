@@ -26,14 +26,17 @@ private:
 	USceneComponent* sceneComponent;
 
 	UPROPERTY( EditAnywhere, Category = "Spawn" )
-	TArray<TSubclassOf<class ABasePlatform>> platformTypes;
+	TSubclassOf<class ABasePlatform> normalPlatform;
+
+	UPROPERTY( EditAnywhere, Category = "Spawn" )
+	TArray<TSubclassOf<class ABasePlatform>> specialPlatforms;
 
 	UPROPERTY( EditAnywhere, Category = "Spawn" )
 	float spawningGap;
 
 	TArray<FVector> spawnPoints;
 	float nextSpawnZ;
-	TArray<TArray<bool>> spawnPatterns;
 
 	void SpawnPlatforms( float z );
+	TArray<bool> GeneratePattern();
 };

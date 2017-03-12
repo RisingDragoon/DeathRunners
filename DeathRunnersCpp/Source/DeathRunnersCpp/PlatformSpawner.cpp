@@ -21,25 +21,6 @@ APlatformSpawner::APlatformSpawner()
 	{
 		UE_LOG( LogTemp, Warning, TEXT( "I detected a spawner" ) );
 	}*/
-
-	spawnPatterns = {
-		{ true, false, false, true, true },
-		{ true, true, false, false, true },
-		{ false, false, true, true, true },
-		{ true, true, true, false, false },
-		{ true, false, true, false, true },
-		{ true, true, false, true, true },
-		{ false, true, true, true, false },
-		{ false, false, false, true, true },
-		{ false, false, true, true, false },
-		{ false, true, true, false, false },
-		{ true, true, false, false, false },
-		{ false, false, false, false, true },
-		{ false, false, false, true, false },
-		{ false, false, true, false, false },
-		{ false, true, false, false, false },
-		{ true, false, false, false, false }
-	};
 }
 
 void APlatformSpawner::BeginPlay()
@@ -71,19 +52,58 @@ void APlatformSpawner::SpawnPlatforms( float z )
 		params.Instigator = Instigator;
 
 		// Seleziona un pattern casuale con cui spawnare le piattaforme.
-		int randPattern = FMath::RandRange( 0, spawnPatterns.Num() - 1 );
+		// int randPattern = FMath::RandRange( 0, spawnPatterns.Num() - 1 );
 
-		// Scorre il pattern e spawna le piattaforme.
-		for ( int col = 0; col < spawnPatterns[randPattern].Num(); col++ )
+		TArray<bool> pattern = GeneratePattern();
+
+		int specialPos = -1;
+
+		if ( FMath::FRandRange( 0.0, 1.0 ) < 0.33 )
 		{
-			if ( spawnPatterns[randPattern][col] )
+			do
+			{
+				specialPos = FMath::RandRange( 0, spawnPoints.Num() - 1 );
+			} while ( !pattern[specialPos] );
+		}
+
+		for ( int col = 0; col < spawnPoints.Num(); col++ )
+		{
+			if ( pattern[col] )
 			{
 				FVector spawnLocation = FVector( 0.0, 0.0, z ) + spawnPoints[col];
+				TSubclassOf<ABasePlatform> toSpawn = normalPlatform;
 
-				// Seleziona una piattaforma casuale da spawnare. Soluzione temporanea.
-				int randPlatform = FMath::RandRange( 0, platformTypes.Num() - 1 );
-				world->SpawnActor<ABasePlatform>( platformTypes[randPlatform], spawnLocation, FRotator::ZeroRotator, params );
+				if ( col == specialPos )
+				{
+					int rand = FMath::RandRange( 0, specialPlatforms.Num() - 1 );
+					toSpawn = specialPlatforms[rand];
+				}
+
+				world->SpawnActor<ABasePlatform>( toSpawn, spawnLocation, FRotator::ZeroRotator, params );
 			}
 		}
 	}
+}
+
+TArray<bool> APlatformSpawner::GeneratePattern()
+{
+	TArray<bool> pattern;
+
+	if ( FMath::RandBool() )
+		pattern = { false, false, false, false, false };
+	else
+		pattern = { true, true, true, true, true };
+
+	TArray<int> rand = { NULL, NULL };
+
+	while ( rand[0] == rand[1] )
+	{
+		rand[0] = FMath::RandRange( 0, spawnPoints.Num() - 1 );
+		rand[1] = FMath::RandRange( 0, spawnPoints.Num() - 1 );
+	}
+
+	for ( int i : rand )
+		pattern[i] = !pattern[i];
+
+	return pattern;
 }
