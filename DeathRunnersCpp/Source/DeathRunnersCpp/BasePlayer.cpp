@@ -13,9 +13,10 @@ ABasePlayer::ABasePlayer()
 	GetSprite()->SetIsReplicated(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	Timer = FTimerHandle();
-	//GetCapsuleComponent()->OnComponentBeginOverlap.AddUnique(&ABasePlayer::SetPlayerToSmash);
+	UCapsuleComponent* capsule = GetCapsuleComponent();
+	capsule->OnComponentBeginOverlap.__Internal_AddDynamic(this, &ABasePlayer::SetPlayerToSmash, FName("SetPlayerToSmash"));
+	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash,FName("ResetPlayerToSmash"));
 }
-
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
@@ -27,12 +28,12 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 void ABasePlayer::Jump()
 {
 	Super::Jump();
-	UE_LOG(LogTemp, Warning, TEXT("Salto"));
-
+	//UE_LOG(LogTemp, Warning, TEXT("Salto"));
 }
 void ABasePlayer::ChargeSmash()
 {
 	IsCharging = true;
+	tipoSmash = Normale;
 	//SmashForce += SmashChargeSpeed;
 	//UE_LOG(LogTemp, Warning, TEXT("potenza pugno : FORZA %d SPEED %d"),SmashForce, SmashChargeSpeed);
 }
@@ -44,7 +45,7 @@ void ABasePlayer::MoveRightOrLeft(float value)
 	{
 		if (IsCharging)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Carico e mi muovo di meta"));
+			//UE_LOG(LogTemp, Warning, TEXT("Carico e mi muovo di meta"));
 			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value / 2);
 		}
 		else
@@ -61,11 +62,7 @@ void ABasePlayer::Smash()
 	{
 		if (PlayerToSmash->IsJumping)
 		{
-			IsOutOfControl = true;
-			IsFalling = true;
-			LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
-			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
-			//PlayerToSmash->StartFalling();
+			PlayerToSmash->StartFalling();
 		}
 	}
 	SmashForce = 0;
@@ -79,16 +76,23 @@ void ABasePlayer::EnableSpecialAbility()
 
 void ABasePlayer::StartFalling()
 {
-	//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	IsOutOfControl = true;
 	IsFalling = true;
+	if (tipoSmash == Caricato)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Il pugno è caricato"));
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+	}
 	LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
 {
-	//GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	if (tipoSmash == Caricato)
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	}
 	IsOutOfControl = false;
 	IsFalling = false;
 }
@@ -98,14 +102,26 @@ void ABasePlayer::SpecialAbility()
 
 }
 
-void ABasePlayer::SetPlayerToSmash()
+void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-
+	ABasePlayer* player = static_cast<ABasePlayer*>(OtherActor);
+	if (player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CanSmash = true;"));
+		CanSmash = true;
+		PlayerToSmash = player;
+	}
 }
 
-void ABasePlayer::ResetPlayerToSmash()
+void ABasePlayer::ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-
+	ABasePlayer* player = static_cast<ABasePlayer*>(OtherActor);
+	if (player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("CanSmash = false;"));
+		CanSmash = false;
+		PlayerToSmash = nullptr;
+	}
 }
 
 void ABasePlayer::UpdateAnimation()
@@ -118,9 +134,13 @@ void ABasePlayer::UpdateAnimation()
 	{
 		DesiredAnimation = FallingAnimation;
 	}
-	else if (PlayerSpeedSqr > 0.0f)
+	else if (IsJumping)
 	{
 		DesiredAnimation = JumpingAnimation;
+	}
+	else if (PlayerSpeedSqr > 0.0f)
+	{
+		DesiredAnimation = RunningAnimation;
 	}
 	else
 	{
@@ -137,10 +157,14 @@ void ABasePlayer::Tick(float deltaSeconds)
 	Super::Tick(deltaSeconds);
 	UpdateCharacter();
 	IsJumping = GetVelocity().SizeSquared() > 0.0f;
-	if (IsCharging && SmashForce < MaxSmashForce)
+	if (IsJumping && IsCharging && SmashForce < MaxSmashForce)
 	{
 		SmashForce += SmashChargeSpeed;
-		UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
+		if (SmashForce > SmashForceLevel)
+		{
+			tipoSmash = Caricato;
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
 	}
 }
 
@@ -192,4 +216,3 @@ void ABasePlayer::LoseControl()
 	IsOutOfControl = true;
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
 }
-

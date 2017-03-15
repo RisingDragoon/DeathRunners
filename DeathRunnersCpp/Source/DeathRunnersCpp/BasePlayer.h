@@ -14,6 +14,7 @@ class DEATHRUNNERSCPP_API ABasePlayer : public APaperCharacter
 	GENERATED_BODY()
 public:
 	ABasePlayer();
+	enum TipoSmash { Caricato, Normale };
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -40,9 +41,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		ABasePlayer* PlayerToSmash = nullptr;
 
-	void SetPlayerToSmash();
+	void SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	void ResetPlayerToSmash();
+	void ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		bool SpecialAbilityIsReady = true;
@@ -63,7 +64,11 @@ public:
 		float MaxSmashForce = 450;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float SmashChargeSpeed = 10;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		float SmashForceLevel = 50;
 
+	TipoSmash tipoSmash;
+	
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -80,6 +85,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* FallingAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* RunningAnimation;
 
 	void Smash();
 
