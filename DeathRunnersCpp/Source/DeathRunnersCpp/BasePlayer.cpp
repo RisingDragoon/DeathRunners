@@ -27,13 +27,14 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 
 void ABasePlayer::Jump()
 {
-	Super::Jump();
 	//UE_LOG(LogTemp, Warning, TEXT("Salto"));
+	Super::Jump();
 }
+
 void ABasePlayer::ChargeSmash()
 {
+	//UE_LOG(LogTemp, Warning, TEXT("ChargeSmash"));
 	IsCharging = true;
-	tipoSmash = Normale;
 	//SmashForce += SmashChargeSpeed;
 	//UE_LOG(LogTemp, Warning, TEXT("potenza pugno : FORZA %d SPEED %d"),SmashForce, SmashChargeSpeed);
 }
@@ -57,15 +58,19 @@ void ABasePlayer::MoveRightOrLeft(float value)
 
 void ABasePlayer::Smash()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Smash"));
 	IsCharging = false;
 	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
 		if (PlayerToSmash->IsJumping)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Forza prima di StartFalling %f"), SmashForce);
+			PlayerToSmash->AppliedForce = SmashForce;
 			PlayerToSmash->StartFalling();
 		}
 	}
 	SmashForce = 0;
+	UE_LOG(LogTemp, Warning, TEXT("Forza dovrebbe essere 0 %f"), SmashForce);
 }
 
 void ABasePlayer::EnableSpecialAbility()
@@ -76,20 +81,24 @@ void ABasePlayer::EnableSpecialAbility()
 
 void ABasePlayer::StartFalling()
 {
+	//UE_LOG(LogTemp, Warning, TEXT("StartFalling"));
 	IsOutOfControl = true;
 	IsFalling = true;
-	if (tipoSmash == Caricato)
+	if (AppliedForce >= SmashForceLevel)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Il pugno è caricato"));
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	}
-	LaunchCharacter(FVector(0.0f, 0.0f, -SmashForce), false, false);
+	LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
+	UE_LOG(LogTemp, Warning, TEXT("Forza %f"), AppliedForce);
+
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
 {
-	if (tipoSmash == Caricato)
+	UE_LOG(LogTemp, Warning, TEXT("StopFalling"));
+	if (AppliedForce >= SmashForceLevel)
 	{
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	}
@@ -104,10 +113,11 @@ void ABasePlayer::SpecialAbility()
 
 void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("SetPlayerToSmash"));
 	ABasePlayer* player = static_cast<ABasePlayer*>(OtherActor);
 	if (player)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CanSmash = true;"));
+		//UE_LOG(LogTemp, Warning, TEXT("CanSmash = true;"));
 		CanSmash = true;
 		PlayerToSmash = player;
 	}
@@ -115,10 +125,11 @@ void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AAc
 
 void ABasePlayer::ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
+	//UE_LOG(LogTemp, Warning, TEXT("ResetPlayerToSmash"));
 	ABasePlayer* player = static_cast<ABasePlayer*>(OtherActor);
 	if (player)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("CanSmash = false;"));
+		//UE_LOG(LogTemp, Warning, TEXT("CanSmash = false;"));
 		CanSmash = false;
 		PlayerToSmash = nullptr;
 	}
@@ -134,11 +145,11 @@ void ABasePlayer::UpdateAnimation()
 	{
 		DesiredAnimation = FallingAnimation;
 	}
-	else if (IsJumping)
+	else if (PlayerVelocity.Z > 0.0f)
 	{
 		DesiredAnimation = JumpingAnimation;
 	}
-	else if (PlayerSpeedSqr > 0.0f)
+	else if (PlayerVelocity.X != 0.0f)
 	{
 		DesiredAnimation = RunningAnimation;
 	}
@@ -160,11 +171,7 @@ void ABasePlayer::Tick(float deltaSeconds)
 	if (IsJumping && IsCharging && SmashForce < MaxSmashForce)
 	{
 		SmashForce += SmashChargeSpeed;
-		if (SmashForce > SmashForceLevel)
-		{
-			tipoSmash = Caricato;
-		}
-		//UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
+		UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
 	}
 }
 
@@ -190,6 +197,7 @@ void ABasePlayer::UpdateCharacter()
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 	}
+	//UE_LOG(LogTemp, Warning, TEXT("PlayerVelocity Z %f"), PlayerVelocity.Z);
 	if (PlayerVelocity.Z > 0.0f)
 	{
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));
@@ -198,11 +206,13 @@ void ABasePlayer::UpdateCharacter()
 	{
 		TArray<AActor*> overlappingPlatforms;
 		GetOverlappingActors(overlappingPlatforms, TSubclassOf<ABasePlatform>());
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 
 		if (overlappingPlatforms.Num() == 0)
 		{
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 		}
+		//UE_LOG(LogTemp, Warning, TEXT("overlappingPlatforms num %d"), overlappingPlatforms.Num());
 	}
 }
 

@@ -14,7 +14,6 @@ class DEATHRUNNERSCPP_API ABasePlayer : public APaperCharacter
 	GENERATED_BODY()
 public:
 	ABasePlayer();
-	enum TipoSmash { Caricato, Normale };
 
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -41,9 +40,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		ABasePlayer* PlayerToSmash = nullptr;
 
-	void SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	UFUNCTION()
+		void SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
-	void ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	UFUNCTION()
+		void ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		bool SpecialAbilityIsReady = true;
@@ -67,8 +68,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		float SmashForceLevel = 50;
 
-	TipoSmash tipoSmash;
-	
+	float AppliedForce = 0;
+
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -78,16 +79,19 @@ protected:
 	void StopFalling();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* JumpingAnimation;
+		class UPaperFlipbook* IdleAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* IdleAnimation;
+		class UPaperFlipbook* RunningAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* JumpingAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* FallingAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* RunningAnimation;
+		class UPaperFlipbook* DyingAnimation;
 
 	void Smash();
 
@@ -98,7 +102,6 @@ protected:
 	virtual void SpecialAbility();
 
 	void MoveRightOrLeft(float value);
-
 
 	bool IsJumping;
 
