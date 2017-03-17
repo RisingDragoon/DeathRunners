@@ -77,6 +77,11 @@ protected:
 
 	void StopFalling();
 
+	void StopSmashing();
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+	class UParticleSystemComponent* ParticleSystemCharging;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* IdleAnimation;
 
@@ -95,6 +100,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* DropAnimation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+	class UPaperFlipbook* SmashingAnimation;
+
 	void Smash();
 
 	void RegainControl();
@@ -106,6 +114,7 @@ protected:
 	void MoveRightOrLeft(float value);
 
 	bool IsJumping;
-
+	bool IsSmashing;
+	bool DontUpdate;
 	bool IsOutOfControl = false;
 };
