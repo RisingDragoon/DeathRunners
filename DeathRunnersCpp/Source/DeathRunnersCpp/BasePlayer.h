@@ -9,6 +9,7 @@
 *
 */
 UCLASS()
+
 class DEATHRUNNERSCPP_API ABasePlayer : public APaperCharacter
 {
 	GENERATED_BODY()
@@ -23,30 +24,28 @@ public:
 
 	void UpdateCharacter();
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float AbilityCooldown = 3.0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+	float AbilityCooldown = 3.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float SmashForce = 0.0;
+	float SmashForce = 0.0;
 
 	FTimerHandle Timer;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float FallingTimeRate = 1.0;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+	float FallingTimeRate = 1.0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		bool CanSmash = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
+		bool CanSmash = false;//VisibleAnywhere
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		ABasePlayer* PlayerToSmash = nullptr;
-
-	UFUNCTION()
-		void SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	ABasePlayer* PlayerToSmash = nullptr;
 
 	UFUNCTION()
-		void ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+	void SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+	UFUNCTION()
+	void ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
 		bool SpecialAbilityIsReady = true;
 
 	void EnableSpecialAbility();
@@ -61,12 +60,12 @@ public:
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 	//	float SmashCharge = 0;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float MaxSmashForce = 450;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float SmashChargeSpeed = 10;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		float SmashForceLevel = 50;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+	float MaxSmashForce = 450;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+	float SmashChargeSpeed = 20;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+	float SmashForceLevel = 100;
 
 	float AppliedForce = 0;
 
@@ -79,19 +78,22 @@ protected:
 	void StopFalling();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* IdleAnimation;
+	class UPaperFlipbook* IdleAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* RunningAnimation;
+	class UPaperFlipbook* RunningAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* JumpingAnimation;
+	class UPaperFlipbook* JumpingAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* FallingAnimation;
+	class UPaperFlipbook* FallingAnimation;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		class UPaperFlipbook* DyingAnimation;
+	class UPaperFlipbook* DyingAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+	class UPaperFlipbook* DropAnimation;
 
 	void Smash();
 
@@ -106,5 +108,4 @@ protected:
 	bool IsJumping;
 
 	bool IsOutOfControl = false;
-
 };

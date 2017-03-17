@@ -15,8 +15,9 @@ ABasePlayer::ABasePlayer()
 	Timer = FTimerHandle();
 	UCapsuleComponent* capsule = GetCapsuleComponent();
 	capsule->OnComponentBeginOverlap.__Internal_AddDynamic(this, &ABasePlayer::SetPlayerToSmash, FName("SetPlayerToSmash"));
-	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash,FName("ResetPlayerToSmash"));
+	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash, FName("ResetPlayerToSmash"));
 }
+
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
@@ -108,10 +109,9 @@ void ABasePlayer::StopFalling()
 
 void ABasePlayer::SpecialAbility()
 {
-
 }
 
-void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
+void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("SetPlayerToSmash"));
 	ABasePlayer* player = static_cast<ABasePlayer*>(OtherActor);
