@@ -68,16 +68,17 @@ public:
 	float SmashForceLevel = 100;
 
 	float AppliedForce = 0;
-
-protected:
-
-	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
+	UFUNCTION(BlueprintCallable, Category = "Sounds")
+		virtual void PlaySmashSound();
 
 	void StartFalling();
 
 	void StopFalling();
 
 	void StopSmashing();
+protected:
+
+	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 	class UParticleSystemComponent* ParticleSystemCharging;
@@ -103,7 +104,11 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* SmashingAnimation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class UAudioComponent* SmashSound;
+
 	void Smash();
+	
 
 	void RegainControl();
 

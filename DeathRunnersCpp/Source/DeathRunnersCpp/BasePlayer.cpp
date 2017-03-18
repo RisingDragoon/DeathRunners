@@ -17,10 +17,15 @@ ABasePlayer::ABasePlayer()
 	capsule->OnComponentBeginOverlap.__Internal_AddDynamic(this, &ABasePlayer::SetPlayerToSmash, FName("SetPlayerToSmash"));
 	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash, FName("ResetPlayerToSmash"));
 	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Fire.P_Fire'"));
-	ParticleSystemCharging = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
-	ParticleSystemCharging->SetTemplate(PS.Object);
-	ParticleSystemCharging->Activate();
-	ParticleSystemCharging->SetActive(false);
+	//ParticleSystemCharging = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
+
+	static ConstructorHelpers::FObjectFinder<USoundBase> smashSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
+	SmashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("sound"));
+	//SoundWave'/Game/Sounds/dr_grab.dr_grab'
+	SmashSound->SetSound(smashSound.Object);
+	//ParticleSystemCharging->SetTemplate(PS.Object);
+	//ParticleSystemCharging->Activate();
+	//ParticleSystemCharging->SetActive(false);
 }
 
 void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
@@ -35,13 +40,14 @@ void ABasePlayer::Jump()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Salto"));
 	Super::Jump();
+	SmashSound->Play(0.0);
 }
 
 void ABasePlayer::ChargeSmash()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("ChargeSmash"));
-	ParticleSystemCharging->SetActive(true);
-	ParticleSystemCharging->Activate();
+	//ParticleSystemCharging->SetActive(true);
+	//ParticleSystemCharging->Activate();
 	IsCharging = true;
 	//SmashForce += SmashChargeSpeed;
 	//UE_LOG(LogTemp, Warning, TEXT("potenza pugno : FORZA %d SPEED %d"),SmashForce, SmashChargeSpeed);
@@ -67,15 +73,16 @@ void ABasePlayer::MoveRightOrLeft(float value)
 void ABasePlayer::Smash()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Tempo smash %f"), SmashingAnimation->GetTotalDuration());
-	ParticleSystemCharging->SetActive(false);
+	//ParticleSystemCharging->SetActive(false);
 	IsCharging = false;
+	IsSmashing = true;
+	float duration = SmashingAnimation->GetTotalDuration();
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
 	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
 		if (PlayerToSmash->IsJumping)
 		{
-			IsSmashing = true;
-			float duration = SmashingAnimation->GetTotalDuration();
-			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
+			//PlaySmashSound();
 			//TODO: far partire animazione e quando finisce riprende il loop normale
 			UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
 			PlayerToSmash->AppliedForce = SmashForce;
@@ -99,7 +106,15 @@ void ABasePlayer::StartFalling()
 	if (AppliedForce >= SmashForceLevel)
 	{
 		UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+		if (GetCapsuleComponent())
+		{
+			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Capsule component null"));
+
+		}
 	}
 	LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
@@ -124,6 +139,10 @@ void ABasePlayer::SpecialAbility()
 {
 }
 
+
+void ABasePlayer::PlaySmashSound()
+{
+}
 void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("SetPlayerToSmash"));
@@ -189,7 +208,7 @@ void ABasePlayer::Tick(float deltaSeconds)
 {
 	Super::Tick(deltaSeconds);
 	UpdateCharacter();
-	ParticleSystemCharging->SetRelativeLocation(GetActorLocation());
+	//ParticleSystemCharging->SetRelativeLocation(GetActorLocation());
 	IsJumping = GetVelocity().Z != 0.0f;
 	if (IsCharging && SmashForce < MaxSmashForce)
 	{
@@ -201,7 +220,7 @@ void ABasePlayer::Tick(float deltaSeconds)
 void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	ParticleSystemCharging->SetActive(false);
+	//ParticleSystemCharging->SetActive(false);
 }
 
 void ABasePlayer::UpdateCharacter()
@@ -237,6 +256,10 @@ void ABasePlayer::UpdateCharacter()
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 		}
 		//UE_LOG(LogTemp, Warning, TEXT("overlappingPlatforms num %d"), overlappingPlatforms.Num());
+	}
+	else
+	{
+		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	}
 }
 
