@@ -77,6 +77,7 @@ void ABasePlayer::Smash()
 			float duration = SmashingAnimation->GetTotalDuration();
 			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
 			//TODO: far partire animazione e quando finisce riprende il loop normale
+			UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
 			PlayerToSmash->AppliedForce = SmashForce;
 			PlayerToSmash->StartFalling();
 		}
@@ -97,6 +98,7 @@ void ABasePlayer::StartFalling()
 	IsFalling = true;
 	if (AppliedForce >= SmashForceLevel)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 	}
 	LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
