@@ -16,7 +16,7 @@ void UCameraMover::BeginPlay()
 	{
 		ACharacter* character = UGameplayStatics::GetPlayerCharacter( GetWorld(), i );
 
-		if ( character != NULL )
+		if ( character != nullptr )
 		{
 			characters.Add( character );
 			UE_LOG( LogTemp, Warning, TEXT( "Character %d detected and added to camera mover array." ), i );
@@ -32,7 +32,10 @@ void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 	
 	for ( auto item : characters )
 	{
-		averageZ += item->GetActorLocation().Z;
+		if (item)
+		{
+			averageZ += item->GetActorLocation().Z;
+		}
 	}
 
 	averageZ /= characters.Num();
@@ -44,7 +47,10 @@ void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 
 	for ( auto item : actorsToMove )
 	{
-		item->AddActorWorldOffset( offset, false );
+		if (item)
+		{
+			item->AddActorWorldOffset( offset, false );
+		}
 	}
 
 	GetOwner()->AddActorWorldOffset( offset, false );
