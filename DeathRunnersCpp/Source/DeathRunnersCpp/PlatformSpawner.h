@@ -38,5 +38,6 @@ private:
 	float nextSpawnZ;
 
 	void SpawnPlatforms( float z );
+
 	TArray<bool> GeneratePattern();
 };

@@ -66,15 +66,16 @@ void ABasePlayer::MoveRightOrLeft(float value)
 
 void ABasePlayer::Smash()
 {
-	IsSmashing = true;
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, SmashingAnimation->GetTotalDuration() , false);
-	UE_LOG(LogTemp, Warning, TEXT("Tempo smash %f"), SmashingAnimation->GetTotalDuration());
+	//UE_LOG(LogTemp, Warning, TEXT("Tempo smash %f"), SmashingAnimation->GetTotalDuration());
 	ParticleSystemCharging->SetActive(false);
 	IsCharging = false;
 	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
 	{
 		if (PlayerToSmash->IsJumping)
 		{
+			IsSmashing = true;
+			float duration = SmashingAnimation->GetTotalDuration();
+			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
 			//TODO: far partire animazione e quando finisce riprende il loop normale
 			PlayerToSmash->AppliedForce = SmashForce;
 			PlayerToSmash->StartFalling();
