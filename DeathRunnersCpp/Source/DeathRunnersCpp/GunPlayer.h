@@ -21,10 +21,13 @@ public:
 
 	void LogY(float value);
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		float LastAxisX = 0;
+	float LastAxisX = 0;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		float LastAxisY = 0;
+	float LastAxisY = 0;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		FVector SpawnPosition;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
+		UClass* Projectile;
 };

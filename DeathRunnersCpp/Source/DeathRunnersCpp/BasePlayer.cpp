@@ -83,7 +83,6 @@ void ABasePlayer::Smash()
 		if (PlayerToSmash->IsJumping)
 		{
 			//PlaySmashSound();
-			//TODO: far partire animazione e quando finisce riprende il loop normale
 			UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
 			PlayerToSmash->AppliedForce = SmashForce;
 			PlayerToSmash->StartFalling();
@@ -115,17 +114,23 @@ void ABasePlayer::StartFalling()
 			UE_LOG(LogTemp, Warning, TEXT("Capsule component null"));
 
 		}
+		LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
 	}
-	LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
+		LaunchCharacter(FVector(0.0f, 0.0f, -BaseSmashForce), false, false);
+	}
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
 {
-	if (AppliedForce >= SmashForceLevel)
+	/*if (AppliedForce >= SmashForceLevel)
 	{
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
-	}
+		UE_LOG(LogTemp, Warning, TEXT("RITORNA A PAWN"));
+	}*/
+	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	IsOutOfControl = false;
 	IsFalling = false;
 }
@@ -143,6 +148,7 @@ void ABasePlayer::SpecialAbility()
 void ABasePlayer::PlaySmashSound()
 {
 }
+
 void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("SetPlayerToSmash"));

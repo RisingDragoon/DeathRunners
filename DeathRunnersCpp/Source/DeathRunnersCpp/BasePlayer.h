@@ -66,7 +66,8 @@ public:
 	float SmashChargeSpeed = 20;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 	float SmashForceLevel = 100;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float BaseSmashForce = 300;
 	float AppliedForce = 0;
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
 		virtual void PlaySmashSound();

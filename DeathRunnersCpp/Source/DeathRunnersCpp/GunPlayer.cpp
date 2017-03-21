@@ -3,6 +3,7 @@
 #include "DeathRunnersCpp.h"
 #include "GunPlayer.h"
 #include "DrawDebugHelpers.h"
+#include "Projectile.h"
 
 
 void AGunPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
@@ -17,15 +18,25 @@ void AGunPlayer::SpecialAbility()
 	//	if (true)
 	if (SpecialAbilityIsReady)
 	{
-		//TODO: spara
-		if (LastAxisX != 0 || LastAxisY != 0)
+		if (LastAxisY >= 0)
 		{
 			FVector direzione = FVector(LastAxisX, 0, LastAxisY);
 			FVector location = GetActorLocation();
 			FVector StartTrace = location;
-			FVector EndTrace = location + direzione * 600;
-			DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 10.f);
+			FVector EndTrace = location + direzione * 300;
+			DrawDebugLine(GetWorld(), StartTrace, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
+			AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, location, FRotator());//SpawnPosition
+			
+			FVector directionToGo = FVector(EndTrace.X , 0, EndTrace.Z);
+			//FVector directionToGo = FVector(EndTrace.X - StartTrace.X, 0, EndTrace.Z - StartTrace.Z);
+			UE_LOG(LogTemp, Warning, TEXT("StartTrace x= %f,y = %f,  z=%f"), StartTrace.X, StartTrace.Y, StartTrace.Z);
+			UE_LOG(LogTemp, Warning, TEXT("EndTrace x= %f,y = %f,  z=%f"), EndTrace.X, EndTrace.Y, EndTrace.Z);
 
+			//FVector directionToGo = location + 600;
+			
+			directionToGo.Y = 0;
+			UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), directionToGo.X, directionToGo.Y, directionToGo.Z);
+			proj->SetDirectionToGo(directionToGo);
 			UE_LOG(LogTemp, Warning, TEXT("Pistola usata"));
 			SpecialAbilityIsReady = false;
 			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
@@ -43,8 +54,11 @@ void AGunPlayer::LogX(float value)
 	if (value !=LastAxisX)
 	{
 		LastAxisX = value;
-		SpecialAbility();
-		UE_LOG(LogTemp, Warning, TEXT("AXIS X: %f"), LastAxisX);//X
+		if (SpecialAbilityIsReady)
+		{
+			//SpecialAbility();
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("AXIS X: %f"), LastAxisX);//X
 	}
 }
 
@@ -57,7 +71,10 @@ void AGunPlayer::LogY(float value)
 	if (value != LastAxisY)
 	{
 		LastAxisY = -value;
-		SpecialAbility();
-		UE_LOG(LogTemp, Warning, TEXT("AXIS Y: %f"), LastAxisY);//Z
+		if (SpecialAbilityIsReady)
+		{
+			//SpecialAbility();
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("AXIS Y: %f"), LastAxisY);//Z
 	}
 }
