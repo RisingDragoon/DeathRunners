@@ -40,7 +40,7 @@ void ABasePlayer::Jump()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Salto"));
 	Super::Jump();
-	SmashSound->Play(0.0);
+	//SmashSound->Play(0.0);//VA BENE
 }
 
 void ABasePlayer::ChargeSmash()
