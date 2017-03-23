@@ -20,12 +20,15 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
-		FVector DirectionToGo = FVector();
+		FVector DirectionToGo = FVector(0,0,0);
 
-	void SetDirectionToGo(FVector direction);
+	void SetDirectionToGo(FVector direction, FString playerName);
+
 	float Speed = 5;
 
+	UFUNCTION()
+		void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
+	FString PlayerName;
 	bool Move=false;
-	
 };

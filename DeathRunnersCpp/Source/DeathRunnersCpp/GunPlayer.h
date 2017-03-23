@@ -13,6 +13,10 @@ class DEATHRUNNERSCPP_API AGunPlayer : public ABasePlayer
 {
 	GENERATED_BODY()
 public:
+
+	AGunPlayer();
+	virtual void BeginPlay() override;
+
 	void SpecialAbility() override;
 
 	void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -26,8 +30,10 @@ public:
 	float LastAxisY = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-		FVector SpawnPosition;
+		FVector SpawnPositionOffset;
 
+	FVector SpawnPosition;
+	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		UClass* Projectile;
 };
