@@ -75,17 +75,20 @@ void ABasePlayer::Smash()
 	//UE_LOG(LogTemp, Warning, TEXT("Tempo smash %f"), SmashingAnimation->GetTotalDuration());
 	//ParticleSystemCharging->SetActive(false);
 	IsCharging = false;
-	IsSmashing = true;
-	float duration = SmashingAnimation->GetTotalDuration();
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
-	if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl && IsJumping)
+	if (IsJumping)
 	{
-		if (PlayerToSmash->IsJumping)
+		IsSmashing = true;
+		float duration = SmashingAnimation->GetTotalDuration();
+		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
+		if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)
 		{
-			//PlaySmashSound();
-			UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
-			PlayerToSmash->AppliedForce = SmashForce;
-			PlayerToSmash->StartFalling();
+			if (PlayerToSmash->IsJumping)
+			{
+				//PlaySmashSound();
+				UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
+				PlayerToSmash->AppliedForce = SmashForce;
+				PlayerToSmash->StartFalling();
+			}
 		}
 	}
 	SmashForce = 0;
