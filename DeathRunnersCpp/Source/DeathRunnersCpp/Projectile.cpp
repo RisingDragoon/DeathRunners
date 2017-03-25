@@ -3,6 +3,7 @@
 #include "DeathRunnersCpp.h"
 #include "Projectile.h"
 #include "BasePlayer.h"
+#include "GunPlayer.h"
 
 AProjectile::AProjectile()
 {
@@ -22,9 +23,11 @@ void AProjectile::Tick(float DeltaSeconds)
 
 void AProjectile::SetDirectionToGo(FVector direction, FString playerName)
 {
-	DirectionToGo = FVector(direction.X, 0, direction.Z);
+	UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
+	DirectionToGo = FVector(direction.X, 0, direction.Z) * 0.05;
+	//0.01  lento
 	Move = true;
-	PlayerName = playerName;
+	//PlayerName = playerName;
 	//DirectionToGo = FVector(direction.X/300, 0,direction.Z/300);
 	//SetActorLocation(direction, true);
 	//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
@@ -32,20 +35,19 @@ void AProjectile::SetDirectionToGo(FVector direction, FString playerName)
 
 void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//Se colpisce un player lo stunna
-	/*if (OtherActor)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlap %s"), *OtherActor->GetName());
-	}*/
-	UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlap %s"), *OtherActor->GetName());
-	//UE_LOG(LogTemp, Warning, TEXT("PlayerName %s"), *PlayerName);
+	//UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlap %s"), *OtherActor->GetName());
+
 	ABasePlayer* HitPlayer = Cast<ABasePlayer>(OtherActor);
-	if (HitPlayer != nullptr && PlayerName != *OtherActor->GetName())// && HitCharacter->GetActorLocation().Z > GetActorLocation().Z + 32.0)
+	AGunPlayer* gunPlayer = Cast<AGunPlayer>(HitPlayer);
+	
+	if (HitPlayer != nullptr && gunPlayer==nullptr)//&& PlayerName != *OtherActor->GetName())// && HitCharacter->GetActorLocation().Z > GetActorLocation().Z + 32.0)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("LOSE CONTROL %s"), *OtherActor->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("LOSE CONTROL %s"), *OtherActor->GetName());
 		HitPlayer->LoseControl();
 	}
-	//Move = false;
-	Destroy();
+	if (gunPlayer == nullptr)
+	{
+		Destroy();
+	}
 }
 

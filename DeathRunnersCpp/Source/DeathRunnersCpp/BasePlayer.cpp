@@ -277,5 +277,7 @@ void ABasePlayer::RegainControl()
 void ABasePlayer::LoseControl()
 {
 	IsOutOfControl = true;
+	UE_LOG(LogTemp, Warning, TEXT("%s Loses control"), *GetName());
+
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
 }
