@@ -1,31 +1,30 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DeathRunnersCpp.h"
-#include "GunPlayer.h"
+#include "GrapplePlayer.h"
+#include "Hand.h"
 #include "DrawDebugHelpers.h"
-#include "Projectile.h"
 
-AGunPlayer::AGunPlayer()
-{
+
+AGrapplePlayer::AGrapplePlayer()
+{	
 }
 
-void AGunPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
+
+void AGrapplePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	Super::SetupPlayerInputComponent(playerInputComponent);
-	playerInputComponent->BindAction("GunOrGrapple", IE_Released, this, &AGunPlayer::SpecialAbility);
-	playerInputComponent->BindAxis("AxisX", this, &AGunPlayer::LogX);
-	playerInputComponent->BindAxis("AxisY", this, &AGunPlayer::LogY);
+	playerInputComponent->BindAction("GunOrGrapple", IE_Released, this, &AGrapplePlayer::SpecialAbility);
+	playerInputComponent->BindAxis("AxisX", this, &AGrapplePlayer::LogX);
+	playerInputComponent->BindAxis("AxisY", this, &AGrapplePlayer::LogY);
 }
 
-void AGunPlayer::BeginPlay()
+void AGrapplePlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	//UE_LOG(LogTemp, Warning, TEXT("GetActorLocation x= %f,y = %f,  z=%f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
-	//SpawnPosition = GetActorLocation() + SpawnPositionOffset;
-	//UE_LOG(LogTemp, Warning, TEXT("SpawnPosition x= %f,y = %f,  z=%f"), SpawnPosition.X, SpawnPosition.Y, SpawnPosition.Z);
 }
 
-void AGunPlayer::SpecialAbility()
+void AGrapplePlayer::SpecialAbility()
 {
 	if (SpecialAbilityIsReady)
 	{
@@ -35,8 +34,9 @@ void AGunPlayer::SpecialAbility()
 			SpawnPosition = GetActorLocation() + SpawnPositionOffset;
 			FVector EndTrace = SpawnPosition + direzione * 300;
 			direzione = SpawnPosition + direzione;
-			//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
-			AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator());
+			DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
+			AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator());
+			//AProjectile* hand = GetWorld()->SpawnActor<AProjectile>(Hand, SpawnPosition, FRotator());
 			FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 
 			//FVector directionToGo = FVector(direzione.X , 0, direzione.Z);
@@ -45,8 +45,9 @@ void AGunPlayer::SpecialAbility()
 			//FVector directionToGo = location + 600;
 			//directionToGo.Y = 0;
 			//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), directionToGo.X, directionToGo.Y, directionToGo.Z);
-			proj->SetDirectionToGo(directionToGo, GetName());
-			UE_LOG(LogTemp, Warning, TEXT("Pistola usata"));
+			
+			hand->SetDirectionToGo(directionToGo, this);
+			UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
 			SpecialAbilityIsReady = false;
 			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 		}
@@ -54,19 +55,19 @@ void AGunPlayer::SpecialAbility()
 }
 
 
-void AGunPlayer::LogX(float value)
+void AGrapplePlayer::LogX(float value)
 {
-	if (value == 0 && LastAxisY==0)
+	if (value == 0 && LastAxisY == 0)
 	{
 		return;
 	}
-	if (value !=LastAxisX)
+	if (value != LastAxisX)
 	{
 		LastAxisX = value;
 	}
 }
 
-void AGunPlayer::LogY(float value)
+void AGrapplePlayer::LogY(float value)
 {
 	if (value == 0 && LastAxisX == 0)
 	{
@@ -77,3 +78,4 @@ void AGunPlayer::LogY(float value)
 		LastAxisY = -value;
 	}
 }
+

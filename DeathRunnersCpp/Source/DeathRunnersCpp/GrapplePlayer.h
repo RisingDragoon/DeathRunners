@@ -3,25 +3,25 @@
 #pragma once
 
 #include "BasePlayer.h"
-#include "GunPlayer.generated.h"
+#include "GrapplePlayer.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class DEATHRUNNERSCPP_API AGunPlayer : public ABasePlayer
+class DEATHRUNNERSCPP_API AGrapplePlayer : public ABasePlayer
 {
 	GENERATED_BODY()
 public:
 
-	AGunPlayer();
+	AGrapplePlayer();
 
 	virtual void BeginPlay() override;
 
 	void SpecialAbility() override;
 
 	void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
-
+	
 	void LogX(float value);
 
 	void LogY(float value);
@@ -34,7 +34,8 @@ public:
 		FVector SpawnPositionOffset;
 
 	FVector SpawnPosition;
-	
+
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
-		UClass* Projectile;
+		UClass* Hand;
+	
 };

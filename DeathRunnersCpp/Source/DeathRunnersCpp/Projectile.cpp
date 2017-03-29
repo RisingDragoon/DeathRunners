@@ -15,18 +15,16 @@ void AProjectile::Tick(float DeltaSeconds)
 {
 	if (Move)
 	{
-		//FVector direction = FVector(DirectionToGo.X * DeltaSeconds, 0, DirectionToGo.Z * DeltaSeconds);// *Speed;
-		//AddActorLocalOffset(DirectionToGo, true);
 		AddActorWorldOffset(DirectionToGo, true);
 	}
 }
 
 void AProjectile::SetDirectionToGo(FVector direction, FString playerName)
 {
-	UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
 	DirectionToGo = FVector(direction.X, 0, direction.Z) * 0.05;
-	//0.01  lento
 	Move = true;
+	//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
+	//0.01  lento
 	//PlayerName = playerName;
 	//DirectionToGo = FVector(direction.X/300, 0,direction.Z/300);
 	//SetActorLocation(direction, true);
@@ -35,7 +33,7 @@ void AProjectile::SetDirectionToGo(FVector direction, FString playerName)
 
 void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	//UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlap %s"), *OtherActor->GetName());
+	UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlap %s"), *OtherActor->GetName());
 
 	ABasePlayer* HitPlayer = Cast<ABasePlayer>(OtherActor);
 	AGunPlayer* gunPlayer = Cast<AGunPlayer>(HitPlayer);
