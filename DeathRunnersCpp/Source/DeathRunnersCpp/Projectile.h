@@ -8,7 +8,7 @@
 /**
  * 
  */
-//UCLASS(ClassGroup = (Custom), meta = (BlueprintSpawnableComponent))
+
 UCLASS()
 class DEATHRUNNERSCPP_API AProjectile : public APaperSpriteActor
 {
@@ -29,6 +29,5 @@ public:
 	UFUNCTION()
 		void OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 private:
-	//FString PlayerName;
 	bool Move=false;
 };

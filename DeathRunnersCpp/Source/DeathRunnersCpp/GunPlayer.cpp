@@ -36,7 +36,7 @@ void AGunPlayer::SpecialAbility()
 			FVector EndTrace = SpawnPosition + direzione * 300;
 			direzione = SpawnPosition + direzione;
 			//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
-			AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator());
+			AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator(0, 0, 0));
 			FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 
 			//FVector directionToGo = FVector(direzione.X , 0, direzione.Z);

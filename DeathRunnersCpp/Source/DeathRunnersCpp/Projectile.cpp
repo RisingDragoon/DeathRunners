@@ -2,7 +2,6 @@
 
 #include "DeathRunnersCpp.h"
 #include "Projectile.h"
-#include "BasePlayer.h"
 #include "GunPlayer.h"
 
 AProjectile::AProjectile()

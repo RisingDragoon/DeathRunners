@@ -3,7 +3,6 @@
 #include "DeathRunnersCpp.h"
 #include "GrapplePlayer.h"
 #include "Hand.h"
-#include "DrawDebugHelpers.h"
 
 
 AGrapplePlayer::AGrapplePlayer()
@@ -34,8 +33,8 @@ void AGrapplePlayer::SpecialAbility()
 			SpawnPosition = GetActorLocation() + SpawnPositionOffset;
 			FVector EndTrace = SpawnPosition + direzione * 300;
 			direzione = SpawnPosition + direzione;
-			DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
-			AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator());
+			//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
+			AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator(0,0,0));
 			//AProjectile* hand = GetWorld()->SpawnActor<AProjectile>(Hand, SpawnPosition, FRotator());
 			FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 
