@@ -258,17 +258,11 @@ void ABasePlayer::UpdateCharacter()
 	{
 		TArray<AActor*> overlappingPlatforms;
 		GetOverlappingActors(overlappingPlatforms, TSubclassOf<ABasePlatform>());
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));//Da togliere
-
+		
 		if (overlappingPlatforms.Num() == 0)
 		{
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("overlappingPlatforms num %d"), overlappingPlatforms.Num());
-	}
-	else
-	{
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	}
 }
 
