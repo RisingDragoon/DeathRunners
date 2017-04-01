@@ -33,7 +33,7 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
 	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
 	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ChargeSmash);
-	playerInputComponent->BindAction("Smash", IE_Released, this, &ABasePlayer::Smash);
+	playerInputComponent->BindAction("Smash", IE_Released, this, &ABasePlayer::ThrowSmash);
 }
 
 void ABasePlayer::Jump()
@@ -70,7 +70,7 @@ void ABasePlayer::MoveRightOrLeft(float value)
 	}
 }
 
-void ABasePlayer::Smash()
+void ABasePlayer::ThrowSmash()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("Tempo smash %f"), SmashingAnimation->GetTotalDuration());
 	//ParticleSystemCharging->SetActive(false);
@@ -78,7 +78,7 @@ void ABasePlayer::Smash()
 	if (IsJumping)
 	{
 		IsSmashing = true;
-		float duration = SmashingAnimation->GetTotalDuration();
+		float duration = Smash->GetTotalDuration();
 		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
 		if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)
 		{
@@ -185,27 +185,27 @@ void ABasePlayer::UpdateAnimation()
 	UPaperFlipbook* DesiredAnimation;
 	if (IsSmashing)
 	{
-		DesiredAnimation = SmashingAnimation;
+		DesiredAnimation = Smash;
 	}
 	else if (IsFalling)
 	{
-		DesiredAnimation = FallingAnimation;
+		DesiredAnimation = Falling;
 	}
 	else if (PlayerVelocity.Z > 0.0f)
 	{
-		DesiredAnimation = JumpingAnimation;
+		DesiredAnimation = Jumping;
 	}
 	else if (PlayerVelocity.Z < 0.0f)
 	{
-		DesiredAnimation = DropAnimation;
+		DesiredAnimation = Dropping;
 	}
 	else if (PlayerVelocity.X != 0.0f)
 	{
-		DesiredAnimation = RunningAnimation;
+		DesiredAnimation = Running;
 	}
 	else
 	{
-		DesiredAnimation = IdleAnimation;
+		DesiredAnimation = Idle;
 	}
 	if (GetSprite()->GetFlipbook() != DesiredAnimation)
 	{
