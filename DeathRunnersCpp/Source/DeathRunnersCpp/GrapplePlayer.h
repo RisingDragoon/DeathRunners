@@ -33,6 +33,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 		FVector SpawnPositionOffset;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float MinValueShot = 40;
+
 	FVector SpawnPosition;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)

@@ -20,7 +20,7 @@ void AProjectile::Tick(float DeltaSeconds)
 
 void AProjectile::SetDirectionToGo(FVector direction, FString playerName)
 {
-	DirectionToGo = FVector(direction.X, 0, direction.Z) * 0.05;
+	DirectionToGo = FVector(direction.X, 0, direction.Z);// *0.05;
 	Move = true;
 	//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
 	//0.01  lento
@@ -37,10 +37,9 @@ void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	ABasePlayer* HitPlayer = Cast<ABasePlayer>(OtherActor);
 	AGunPlayer* gunPlayer = Cast<AGunPlayer>(HitPlayer);
 	
-	if (HitPlayer != nullptr && gunPlayer==nullptr)//&& PlayerName != *OtherActor->GetName())// && HitCharacter->GetActorLocation().Z > GetActorLocation().Z + 32.0)
+	if (HitPlayer != nullptr && gunPlayer==nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("LOSE CONTROL %s"), *OtherActor->GetName());
-		HitPlayer->LoseControl();
+		HitPlayer->ReceiveShot();
 	}
 	if (gunPlayer == nullptr)
 	{

@@ -86,12 +86,24 @@ void ABasePlayer::ThrowSmash()
 			{
 				//PlaySmashSound();
 				UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
+				if (SmashForce < BaseSmashForce)
+				{
+					//Applica la forza minima
+					SmashForce = BaseSmashForce;
+				}
 				PlayerToSmash->AppliedForce = SmashForce;
 				PlayerToSmash->StartFalling();
 			}
 		}
 	}
 	SmashForce = 0;
+}
+
+void ABasePlayer::ReceiveShot()
+{
+	//Metto la AppliedForce sempre minore del livello della forza così quando vieni colpito dallo sparo non è un pugno caricato
+	AppliedForce = SmashForceLevel - 1;
+	StartFalling();
 }
 
 void ABasePlayer::EnableSpecialAbility()
@@ -105,9 +117,9 @@ void ABasePlayer::StartFalling()
 	//UE_LOG(LogTemp, Warning, TEXT("StartFalling"));
 	IsOutOfControl = true;
 	IsFalling = true;
-	if (AppliedForce >= SmashForceLevel)
+	if (AppliedForce > SmashForceLevel)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
+		//UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
 		if (GetCapsuleComponent())
 		{
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
@@ -115,13 +127,12 @@ void ABasePlayer::StartFalling()
 		else
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Capsule component null"));
-
 		}
 		LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
+		//UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
 		LaunchCharacter(FVector(0.0f, 0.0f, -BaseSmashForce), false, false);
 	}
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);

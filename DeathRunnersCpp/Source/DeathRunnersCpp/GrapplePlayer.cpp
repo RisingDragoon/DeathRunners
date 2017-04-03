@@ -33,22 +33,30 @@ void AGrapplePlayer::SpecialAbility()
 			SpawnPosition = GetActorLocation() + SpawnPositionOffset;
 			FVector EndTrace = SpawnPosition + direzione * 300;
 			direzione = SpawnPosition + direzione;
-			//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
-			AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator(0,0,0));
-			//AProjectile* hand = GetWorld()->SpawnActor<AProjectile>(Hand, SpawnPosition, FRotator());
-			FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 
-			//FVector directionToGo = FVector(direzione.X , 0, direzione.Z);
-			//UE_LOG(LogTemp, Warning, TEXT("StartTrace x= %f,y = %f,  z=%f"), StartTrace.X, StartTrace.Y, StartTrace.Z);
-			//UE_LOG(LogTemp, Warning, TEXT("EndTrace x= %f,y = %f,  z=%f"), EndTrace.X, EndTrace.Y, EndTrace.Z);
-			//FVector directionToGo = location + 600;
-			//directionToGo.Y = 0;
-			//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), directionToGo.X, directionToGo.Y, directionToGo.Z);
-			
-			hand->SetDirectionToGo(directionToGo, this);
-			UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
-			SpecialAbilityIsReady = false;
-			GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+			float base = EndTrace.X - SpawnPosition.X;
+			float altezza = EndTrace.Z - SpawnPosition.Z;
+			base = (base > 0) ? base : -base;
+			altezza = (altezza > 0) ? altezza : -altezza;
+
+			float value = sqrt(pow(2, (base)) + pow(2, (altezza)));
+			UE_LOG(LogTemp, Warning, TEXT("Modulo %f"), value);
+
+			if (value > MinValueShot)
+			{
+				//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
+				AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator(0, 0, 0));
+				FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
+
+				hand->SetDirectionToGo(directionToGo, this);
+				UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
+				SpecialAbilityIsReady = false;
+				GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+			}
+			else
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Nop"));
+			}
 		}
 	}
 }

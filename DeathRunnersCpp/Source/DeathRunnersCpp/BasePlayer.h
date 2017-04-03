@@ -80,9 +80,10 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 	float SmashChargeSpeed = 20;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-	float SmashForceLevel = 100;
+	float SmashForceLevel = 350;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-		float BaseSmashForce = 300;
+	float BaseSmashForce = 300;
+
 	float AppliedForce = 0;
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
 		virtual void PlaySmashSound();
@@ -90,6 +91,8 @@ public:
 	void StartFalling();
 
 	void StopFalling();
+
+	void ReceiveShot();
 
 	void StopSmashing();
 protected:
