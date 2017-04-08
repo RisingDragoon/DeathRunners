@@ -5,7 +5,7 @@
 #include "PaperCharacter.h"
 #include "BasePlayer.generated.h"
 
-enum class PlayerState : uint8
+enum class PlayerAnimation : uint8
 {
 	Idle,
 	Running,
@@ -86,7 +86,7 @@ public:
 
 	float AppliedForce = 0;
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
-		virtual void PlaySmashSound();
+		virtual void PlaySound(UAudioComponent* sound);
 
 	void StartFalling();
 
@@ -95,6 +95,7 @@ public:
 	void ReceiveShot();
 
 	void StopSmashing();
+
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -149,9 +150,14 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
 		class UAudioComponent* SmashSound;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class UAudioComponent* JumpSound;
+	
 	void ThrowSmash();
 
 	void RegainControl();
+
+	void SetSounds();
 
 	virtual void Jump() override;
 
@@ -161,6 +167,6 @@ protected:
 
 	bool IsJumping;
 	bool IsSmashing;
-	bool DontUpdate;
 	bool IsOutOfControl = false;
+	bool IsFaceRight;
 };

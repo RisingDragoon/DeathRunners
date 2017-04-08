@@ -16,13 +16,11 @@ ABasePlayer::ABasePlayer()
 	UCapsuleComponent* capsule = GetCapsuleComponent();
 	capsule->OnComponentBeginOverlap.__Internal_AddDynamic(this, &ABasePlayer::SetPlayerToSmash, FName("SetPlayerToSmash"));
 	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash, FName("ResetPlayerToSmash"));
-	static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Fire.P_Fire'"));
-	//ParticleSystemCharging = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
+	SetSounds();
 
-	static ConstructorHelpers::FObjectFinder<USoundBase> smashSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
-	SmashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("sound"));
+	//static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Fire.P_Fire'"));
+	//ParticleSystemCharging = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	//SoundWave'/Game/Sounds/dr_grab.dr_grab'
-	SmashSound->SetSound(smashSound.Object);
 	//ParticleSystemCharging->SetTemplate(PS.Object);
 	//ParticleSystemCharging->Activate();
 	//ParticleSystemCharging->SetActive(false);
@@ -38,11 +36,19 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 
 void ABasePlayer::Jump()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Salto"));
 	Super::Jump();
-	//SmashSound->Play(0.0);//VA BENE
+	PlaySound(JumpSound);
 }
+void ABasePlayer::SetSounds()
+{
+	//static ConstructorHelpers::FObjectFinder<USoundBase> smashSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
+	//SmashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("SmashSound"));
+	//SmashSound->SetSound(smashSound.Object);
 
+	//static ConstructorHelpers::FObjectFinder<USoundBase> jumpSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
+	//JumpSound = CreateDefaultSubobject<UAudioComponent>(TEXT("JumpSound"));
+	//JumpSound->SetSound(jumpSound.Object);
+}
 void ABasePlayer::ChargeSmash()
 {
 	//UE_LOG(LogTemp, Warning, TEXT("ChargeSmash"));
@@ -58,6 +64,23 @@ void ABasePlayer::MoveRightOrLeft(float value)
 	UpdateCharacter();
 	if (!IsOutOfControl)
 	{
+		if(value>0)
+		{
+			if (!IsFaceRight)
+			{
+				IsFaceRight = true;
+				//UE_LOG(LogTemp, Warning, TEXT("IsFaceRight = true"));
+			}
+		}
+		else if (value<0)
+		{
+			if (IsFaceRight)
+			{
+				IsFaceRight = false;
+				//UE_LOG(LogTemp, Warning, TEXT("IsFaceRight = false"));
+			}
+		}
+
 		if (IsCharging && !IsJumping)
 		{
 			//UE_LOG(LogTemp, Warning, TEXT("Carico e mi muovo di meta"));
@@ -72,7 +95,6 @@ void ABasePlayer::MoveRightOrLeft(float value)
 
 void ABasePlayer::ThrowSmash()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Tempo smash %f"), SmashingAnimation->GetTotalDuration());
 	//ParticleSystemCharging->SetActive(false);
 	IsCharging = false;
 	if (IsJumping)
@@ -159,8 +181,9 @@ void ABasePlayer::SpecialAbility()
 }
 
 
-void ABasePlayer::PlaySmashSound()
+void ABasePlayer::PlaySound(UAudioComponent* sound)
 {
+	sound->Play(0.0);
 }
 
 void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

@@ -22,7 +22,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 		FVector DirectionToGo = FVector(0,0,0);
 
-	void SetDirectionToGo(FVector direction, FString playerName);
+	void SetDirectionToGo(FVector direction);
 
 	float Speed = 5;
 

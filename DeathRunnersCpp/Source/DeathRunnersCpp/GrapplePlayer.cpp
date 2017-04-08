@@ -40,7 +40,7 @@ void AGrapplePlayer::SpecialAbility()
 			altezza = (altezza > 0) ? altezza : -altezza;
 
 			float value = sqrt(pow(2, (base)) + pow(2, (altezza)));
-			UE_LOG(LogTemp, Warning, TEXT("Modulo %f"), value);
+			//UE_LOG(LogTemp, Warning, TEXT("Modulo %f"), value);
 
 			if (value > MinValueShot)
 			{

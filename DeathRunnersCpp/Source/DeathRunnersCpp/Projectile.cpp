@@ -18,16 +18,10 @@ void AProjectile::Tick(float DeltaSeconds)
 	}
 }
 
-void AProjectile::SetDirectionToGo(FVector direction, FString playerName)
+void AProjectile::SetDirectionToGo(FVector direction)
 {
-	DirectionToGo = FVector(direction.X, 0, direction.Z);// *0.05;
+	DirectionToGo = FVector(direction.X, 0, direction.Z);
 	Move = true;
-	//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
-	//0.01  lento
-	//PlayerName = playerName;
-	//DirectionToGo = FVector(direction.X/300, 0,direction.Z/300);
-	//SetActorLocation(direction, true);
-	//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
 }
 
 void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
