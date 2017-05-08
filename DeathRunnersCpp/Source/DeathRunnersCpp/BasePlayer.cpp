@@ -42,7 +42,7 @@ void ABasePlayer::Jump()
 void ABasePlayer::SetSounds()
 {
 	//static ConstructorHelpers::FObjectFinder<USoundBase> smashSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
-	SmashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("SmashSound"));
+	//SmashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("SmashSound"));
 	//SmashSound->SetSound(smashSound.Object);
 
 	//static ConstructorHelpers::FObjectFinder<USoundBase> jumpSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));

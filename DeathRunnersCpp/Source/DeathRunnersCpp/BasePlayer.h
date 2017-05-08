@@ -157,9 +157,6 @@ protected:
 
 	//Audio
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
-		class UAudioComponent* SmashSound;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
 		class UAudioComponent* JumpSound;
 	
 	void ThrowSmash();
