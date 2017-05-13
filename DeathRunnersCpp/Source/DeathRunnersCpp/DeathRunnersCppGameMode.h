@@ -2,6 +2,7 @@
 
 #pragma once
 #include "GameFramework/GameModeBase.h"
+#include "BasePlayer.h"
 #include "DeathRunnersCppGameMode.generated.h"
 
 // The GameMode defines the game being played. It governs the game rules, scoring, what actors
@@ -16,4 +17,10 @@ class ADeathRunnersCppGameMode : public AGameModeBase
 public:
 	ADeathRunnersCppGameMode();
 	virtual void BeginPlay() override;
+
+	void RemovePlayer(ABasePlayer* player);
+	
+protected:
+	UPROPERTY(BlueprintReadWrite)
+	TArray<ABasePlayer*> players;
 };
