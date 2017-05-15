@@ -7,6 +7,7 @@
 
 enum class PlayerAnimation : uint8
 {
+	Nothing,
 	Idle,
 	Running,
 	Jumping,
@@ -20,7 +21,11 @@ enum class PlayerAnimation : uint8
 	RunEnd,
 	ChangeDirectionDx,
 	ChangeDirectionSx,
-	Die
+	Die,
+	RunChangeDirection,
+	JumpChangeDirection,
+	Hit,
+	DropChangeDirection
 };
 
 UCLASS()
@@ -94,7 +99,19 @@ public:
 
 	void ReceiveShot();
 
-	void StopSmashing();
+	//void StopSmashing();
+
+	void StartAnimation(PlayerAnimation animazione);
+
+	void EndAnimation();
+
+	bool InAnimation = false;
+
+	PlayerAnimation SelectedAnimation = PlayerAnimation::Nothing;
+
+	void GetFlipbookByAnimation(PlayerAnimation animation);
+
+	class UPaperFlipbook* SelectedFlipbook = nullptr;
 
 protected:
 
@@ -105,55 +122,52 @@ protected:
 
 	//Animazioni
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Idle;
+	class UPaperFlipbook* Idle;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* RunStart;
+	class UPaperFlipbook* RunStart;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Running;
+	class UPaperFlipbook* Running;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* RunEnd;
+	class UPaperFlipbook* RunEnd;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* RunChangeDirection;
+	class UPaperFlipbook* RunChangeDirection;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* JumpStart;
+	class UPaperFlipbook* JumpStart;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Jumping;
+	class UPaperFlipbook* Jumping;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Dropping;
+	class UPaperFlipbook* Dropping;//mmm
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* JumpEnd;
+	class UPaperFlipbook* JumpEnd;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* JumpChangeDirection;
+	class UPaperFlipbook* JumpChangeDirection;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* DropChangeDirection;
+	class UPaperFlipbook* DropChangeDirection;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Smash;
+	class UPaperFlipbook* Smash;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Skill;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Hit;
+	class UPaperFlipbook* Hit;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* Falling;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Stun;
+	class UPaperFlipbook* Stun;//ok
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-	class UPaperFlipbook* Die;
+	class UPaperFlipbook* Die;//ok
 
 	//Audio
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)

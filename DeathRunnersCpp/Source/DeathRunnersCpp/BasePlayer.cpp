@@ -99,15 +99,16 @@ void ABasePlayer::ThrowSmash()
 	IsCharging = false;
 	if (IsJumping)
 	{
-		IsSmashing = true;
-		float duration = Smash->GetTotalDuration();
-		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
+		//IsSmashing = true;
+		//float duration = Smash->GetTotalDuration();
+		//GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
+		StartAnimation(PlayerAnimation::Smash);
 		if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)
 		{
 			if (PlayerToSmash->IsJumping)
 			{
 				//PlaySmashSound();
-				UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
+				//UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
 				if (SmashForce < BaseSmashForce)
 				{
 					//Applica la forza minima
@@ -162,24 +163,91 @@ void ABasePlayer::StartFalling()
 
 void ABasePlayer::StopFalling()
 {
-	/*if (AppliedForce >= SmashForceLevel)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("RITORNA A PAWN"));
-	}*/
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	IsOutOfControl = false;
 	IsFalling = false;
 }
 
-void ABasePlayer::StopSmashing()
+void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 {
-	IsSmashing = false;
+	InAnimation = true;
+	float timeOfAnimation = 0;
+
+	switch (animazione)
+	{
+	case PlayerAnimation::Smash:
+		if (Smash)
+		{
+			timeOfAnimation = Smash->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::Stun:
+		if (Stun)
+		{
+			timeOfAnimation = Stun->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::JumpStart:
+		if (JumpStart)
+		{
+			timeOfAnimation = JumpStart->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::JumpEnd:
+		if (JumpEnd)
+		{
+			timeOfAnimation = JumpEnd->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::RunStart:
+		if (RunStart)
+		{
+			timeOfAnimation = RunStart->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::RunEnd:
+		if (RunEnd)
+		{
+			timeOfAnimation = RunEnd->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::RunChangeDirection:
+		if (RunChangeDirection)
+		{
+			timeOfAnimation = RunChangeDirection->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::JumpChangeDirection:
+		if (JumpChangeDirection)
+		{
+			timeOfAnimation = JumpChangeDirection->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::Die:
+		if (Die)
+		{
+			timeOfAnimation = Die->GetTotalDuration();
+		}
+		break;
+	case PlayerAnimation::DropChangeDirection:
+		if (DropChangeDirection)
+		{
+			timeOfAnimation = DropChangeDirection->GetTotalDuration();
+		}
+		break;
+	}
+	SelectedAnimation = animazione;
+	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EndAnimation, timeOfAnimation, false);
+}
+
+void ABasePlayer::EndAnimation()
+{
+	SelectedAnimation = PlayerAnimation::Nothing;
 }
 
 void ABasePlayer::SpecialAbility()
 {
 }
-
 
 void ABasePlayer::PlaySound(UAudioComponent* sound)
 {
@@ -209,6 +277,72 @@ void ABasePlayer::ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, A
 		PlayerToSmash = nullptr;
 	}
 }
+void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
+{
+	switch (animation)
+	{
+	case PlayerAnimation::Smash:
+		if (Smash)
+		{
+			SelectedFlipbook = Smash;
+		}
+		break;
+	case PlayerAnimation::Stun:
+		if (Stun)
+		{
+			SelectedFlipbook = Stun;
+		}
+		break;
+	case PlayerAnimation::JumpStart:
+		if (JumpStart)
+		{
+			SelectedFlipbook = JumpStart;
+		}
+		break;
+	case PlayerAnimation::JumpEnd:
+		if (JumpEnd)
+		{
+			SelectedFlipbook = JumpEnd;
+		}
+		break;
+	case PlayerAnimation::RunStart:
+		if (RunStart)
+		{
+			SelectedFlipbook = RunStart;
+		}
+		break;
+	case PlayerAnimation::RunEnd:
+		if (RunEnd)
+		{
+			SelectedFlipbook = RunEnd;
+		}
+		break;
+	case PlayerAnimation::RunChangeDirection:
+		if (RunChangeDirection)
+		{
+			SelectedFlipbook = RunChangeDirection;
+		}
+		break;
+	case PlayerAnimation::JumpChangeDirection:
+		if (JumpChangeDirection)
+		{
+			SelectedFlipbook = JumpChangeDirection;
+		}
+		break;
+	case PlayerAnimation::Die:
+		if (Die)
+		{
+			SelectedFlipbook = Die;
+		}
+		break;
+	case PlayerAnimation::DropChangeDirection:
+		if (DropChangeDirection)
+		{
+			SelectedFlipbook = DropChangeDirection;
+		}
+		break;
+	}
+}
 
 void ABasePlayer::UpdateAnimation()
 {
@@ -217,9 +351,17 @@ void ABasePlayer::UpdateAnimation()
 	//const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 
 	UPaperFlipbook* DesiredAnimation;
-	if (IsSmashing)
+	if (SelectedAnimation != PlayerAnimation::Nothing)
 	{
-		DesiredAnimation = Smash;
+		GetFlipbookByAnimation(SelectedAnimation);
+		if (SelectedFlipbook)
+		{
+			DesiredAnimation = SelectedFlipbook;
+		}
+		else
+		{
+			DesiredAnimation = Idle;
+		}
 	}
 	else if (IsFalling)
 	{

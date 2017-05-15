@@ -33,7 +33,7 @@ void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	
 	if (HitPlayer != nullptr && gunPlayer==nullptr)
 	{
-		HitPlayer->ReceiveShot();
+		//HitPlayer->ReceiveShot();
 	}
 	if (gunPlayer == nullptr)
 	{
