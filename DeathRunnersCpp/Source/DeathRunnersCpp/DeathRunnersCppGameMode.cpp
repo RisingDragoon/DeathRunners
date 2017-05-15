@@ -16,3 +16,8 @@ void ADeathRunnersCppGameMode::BeginPlay()
 	Super::BeginPlay();
 	
 }
+
+void ADeathRunnersCppGameMode::RemovePlayer(ABasePlayer* player)
+{
+	players.Remove(player);
+}

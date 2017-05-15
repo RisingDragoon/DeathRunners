@@ -93,6 +93,9 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
 		virtual void PlaySound(UAudioComponent* sound);
 
+	UFUNCTION(BlueprintCallable, Category = "Game")
+	void Suicide();
+
 	void StartFalling();
 
 	void StopFalling();

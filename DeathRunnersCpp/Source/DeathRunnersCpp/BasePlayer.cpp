@@ -2,6 +2,7 @@
 
 #include "DeathRunnersCpp.h"
 #include "BasePlayer.h"
+#include "DeathRunnersCppGameMode.h"
 #include "PaperFlipbookComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "BasePlatform.h"
@@ -252,6 +253,13 @@ void ABasePlayer::SpecialAbility()
 void ABasePlayer::PlaySound(UAudioComponent* sound)
 {
 	sound->Play(0.0);
+}
+
+void ABasePlayer::Suicide()
+{
+	ADeathRunnersCppGameMode* gameMode = (ADeathRunnersCppGameMode*) GetWorld()->GetAuthGameMode();
+	gameMode->RemovePlayer( this );
+	Destroy();
 }
 
 void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
