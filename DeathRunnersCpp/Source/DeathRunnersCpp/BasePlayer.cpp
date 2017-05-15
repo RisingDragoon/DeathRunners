@@ -6,6 +6,7 @@
 #include "PaperFlipbookComponent.h"
 #include "Components/TextRenderComponent.h"
 #include "BasePlatform.h"
+#include "GunPlayer.h"
 #include <string>
 
 
@@ -265,12 +266,27 @@ void ABasePlayer::Suicide()
 void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	//UE_LOG(LogTemp, Warning, TEXT("SetPlayerToSmash"));
-	ABasePlayer* player = static_cast<ABasePlayer*>(OtherActor);
-	if (player)
+	//ABasePlayer* classe = OtherActor->GetActorClass();
+	ABasePlayer* player = (ABasePlayer*) (OtherActor);
+	if (player != nullptr)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("CanSmash = true;"));
-		CanSmash = true;
-		PlayerToSmash = player;
+		FString nome = player->GetName();
+		if (nome.Contains(FString("Player")))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Settato playertosmash %s"), *nome);
+			CanSmash = true;
+			PlayerToSmash = player;
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("null playertosmash"));
+			PlayerToSmash = nullptr;
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("null playertosmash"));
+		PlayerToSmash = nullptr;
 	}
 }
 

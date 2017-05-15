@@ -94,7 +94,7 @@ public:
 		virtual void PlaySound(UAudioComponent* sound);
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
-	void Suicide();
+		void Suicide();
 
 	void StartFalling();
 
