@@ -44,7 +44,6 @@ void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 	float speed = FMath::Lerp( minSpeed, maxSpeed, speedFactor );
 	if (speed<minSpeed)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("speed min di min speed"));
 		speed = minSpeed;
 	}
 	FVector offset = FVector( 0.0, 0.0, speed ) * DeltaTime;
