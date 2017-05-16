@@ -64,8 +64,22 @@ void ABasePlayer::ChargeSmash()
 void ABasePlayer::MoveRightOrLeft(float value)
 {
 	UpdateCharacter();
+	if (value == 0)
+	{
+		return;
+	}
 	if (!IsOutOfControl)
 	{
+		if (value > 0  && value < DeadZoneUp)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Valore %f "), value);
+			value = DeadZoneUp;
+		}
+		else if (value < 0 && value > DeadZoneDown)
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Valore %f "), value);
+			value = DeadZoneDown;
+		}
 		if(value>0)
 		{
 			if (!IsFaceRight)

@@ -25,7 +25,7 @@ void AGunPlayer::BeginPlay()
 
 void AGunPlayer::SpecialAbility()
 {
-	if (SpecialAbilityIsReady)
+	if (SpecialAbilityIsReady && PlayerToSmash == nullptr)
 	{
 		SpawnPosition = GetActorLocation() + SpawnPositionOffset;
 		FVector direction = IsFaceRight ? FVector(1, 0, 0) : FVector(-1, 0, 0);

@@ -88,7 +88,10 @@ public:
 	float SmashForceLevel = 350;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 	float BaseSmashForce = 300;
-
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float DeadZoneUp = 0.4f;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float DeadZoneDown = -0.4f;
 	float AppliedForce = 0;
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
 		virtual void PlaySound(UAudioComponent* sound);
