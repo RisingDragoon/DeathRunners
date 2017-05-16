@@ -34,7 +34,7 @@ void AGunPlayer::SpecialAbility()
 		FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 		AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator(0, 0, 0));
 		proj->SetDirectionToGo(directionToGo);
-		UE_LOG(LogTemp, Warning, TEXT("Pistola usata"));
+		//UE_LOG(LogTemp, Warning, TEXT("Pistola usata"));
 		SpecialAbilityIsReady = false;
 		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 	}

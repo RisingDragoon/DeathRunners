@@ -26,14 +26,14 @@ void AProjectile::SetDirectionToGo(FVector direction)
 
 void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UE_LOG(LogTemp, Warning, TEXT("OnBeginOverlap %s"), *OtherActor->GetName());
 
 	ABasePlayer* HitPlayer = Cast<ABasePlayer>(OtherActor);
 	AGunPlayer* gunPlayer = Cast<AGunPlayer>(HitPlayer);
 	
 	if (HitPlayer != nullptr && gunPlayer==nullptr)
 	{
-		//HitPlayer->ReceiveShot();
+		UE_LOG(LogTemp, Warning, TEXT("Colpito con lo sputo %s"), *OtherActor->GetName());
+		HitPlayer->ReceiveShot();
 	}
 	if (gunPlayer == nullptr)
 	{

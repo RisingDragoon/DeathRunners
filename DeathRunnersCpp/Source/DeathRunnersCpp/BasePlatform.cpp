@@ -35,6 +35,8 @@ void ABasePlatform::OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor
 	{
 		if (HitCharacter->IsFalling)
 		{
+			UE_LOG(LogTemp, Warning, TEXT("ha sbattuto qundi Lose control"));
+
 			HitCharacter->LoseControl();
 		}
 

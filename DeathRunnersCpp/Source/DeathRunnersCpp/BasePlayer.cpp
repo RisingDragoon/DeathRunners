@@ -157,7 +157,7 @@ void ABasePlayer::StartFalling()
 	}
 	else
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
+		UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
 		LaunchCharacter(FVector(0.0f, 0.0f, -BaseSmashForce), false, false);
 	}
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
@@ -166,6 +166,7 @@ void ABasePlayer::StartFalling()
 void ABasePlayer::StopFalling()
 {
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+	UE_LOG(LogTemp, Warning, TEXT("stop falling"));
 	IsOutOfControl = false;
 	IsFalling = false;
 }
@@ -273,19 +274,19 @@ void ABasePlayer::SetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, AAc
 		FString nome = player->GetName();
 		if (nome.Contains(FString("Player")))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Settato playertosmash %s"), *nome);
+			//UE_LOG(LogTemp, Warning, TEXT("Settato playertosmash %s"), *nome);
 			CanSmash = true;
 			PlayerToSmash = player;
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("null playertosmash"));
+			//UE_LOG(LogTemp, Warning, TEXT("null playertosmash"));
 			PlayerToSmash = nullptr;
 		}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Warning, TEXT("null playertosmash"));
+		//UE_LOG(LogTemp, Warning, TEXT("null playertosmash"));
 		PlayerToSmash = nullptr;
 	}
 }
@@ -468,13 +469,14 @@ void ABasePlayer::UpdateCharacter()
 
 void ABasePlayer::RegainControl()
 {
+	UE_LOG(LogTemp, Warning, TEXT("%s RegainControl"), *GetName());
 	IsOutOfControl = false;
+	StopFalling();
 }
 
 void ABasePlayer::LoseControl()
 {
-	IsOutOfControl = true;
 	UE_LOG(LogTemp, Warning, TEXT("%s Loses control"), *GetName());
-
+	IsOutOfControl = true;
 	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
 }
