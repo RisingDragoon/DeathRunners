@@ -42,7 +42,11 @@ void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 
 	float speedFactor = (( averageZ - GetOwner()->GetActorLocation().Z ) / 1080.0 ) + 0.5;
 	float speed = FMath::Lerp( minSpeed, maxSpeed, speedFactor );
-
+	if (speed<minSpeed)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("speed min di min speed"));
+		speed = minSpeed;
+	}
 	FVector offset = FVector( 0.0, 0.0, speed ) * DeltaTime;
 
 	for ( auto item : actorsToMove )
