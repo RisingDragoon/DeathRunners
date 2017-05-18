@@ -30,6 +30,4 @@ private:
 
 	UPROPERTY( EditAnywhere, Category = "Movement" )
 	float maxSpeed;
-
-	TArray<ACharacter*> characters;
 };

@@ -18,7 +18,9 @@ public:
 	ADeathRunnersCppGameMode();
 	virtual void BeginPlay() override;
 
-	void RemovePlayer(ABasePlayer* player);
+	TArray<ABasePlayer*> GetPlayers();
+	void AddPlayer( ABasePlayer* player );
+	void RemovePlayer( ABasePlayer* player );
 	
 protected:
 	UPROPERTY(BlueprintReadWrite)

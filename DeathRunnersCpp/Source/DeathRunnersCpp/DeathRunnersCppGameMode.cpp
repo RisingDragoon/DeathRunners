@@ -17,7 +17,22 @@ void ADeathRunnersCppGameMode::BeginPlay()
 	
 }
 
-void ADeathRunnersCppGameMode::RemovePlayer(ABasePlayer* player)
+TArray<ABasePlayer*> ADeathRunnersCppGameMode::GetPlayers()
 {
-	players.Remove(player);
+	return players;
+}
+
+void ADeathRunnersCppGameMode::AddPlayer( ABasePlayer* player )
+{
+	players.Add( player );
+}
+
+void ADeathRunnersCppGameMode::RemovePlayer( ABasePlayer* player )
+{
+	players.Remove( player );
+
+	if ( players.Num() == 1 )
+	{
+		UGameplayStatics::SetGamePaused( GetWorld(), true );
+	}
 }
