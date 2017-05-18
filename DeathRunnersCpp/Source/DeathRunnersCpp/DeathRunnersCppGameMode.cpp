@@ -34,5 +34,6 @@ void ADeathRunnersCppGameMode::RemovePlayer( ABasePlayer* player )
 	if ( players.Num() == 1 )
 	{
 		UGameplayStatics::SetGamePaused( GetWorld(), true );
+		GameOver( players[0] ); // Spara un evento da blueprint
 	}
 }

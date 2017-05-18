@@ -23,6 +23,9 @@ public:
 	void RemovePlayer( ABasePlayer* player );
 	
 protected:
+	UFUNCTION(BlueprintImplementableEvent, Category = "Default")
+	void GameOver( ABasePlayer* winner );
+
 	UPROPERTY(BlueprintReadWrite)
 	TArray<ABasePlayer*> players;
 };
