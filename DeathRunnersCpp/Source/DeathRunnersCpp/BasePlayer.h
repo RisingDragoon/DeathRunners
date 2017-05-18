@@ -26,7 +26,10 @@ enum class PlayerAnimation : uint8
 	JumpChangeDirection,
 	Hit,
 	DropChangeDirection,
-	Skill
+	Skill,
+	Smaterialize, 
+	Materialize,
+	NoHand
 };
 
 UCLASS()
@@ -121,6 +124,10 @@ public:
 
 	class UPaperFlipbook* SelectedFlipbook = nullptr;
 
+	FVector LocationToTeleport = FVector(0, 0, 0);
+	
+	bool IsOutOfControl = false;
+
 protected:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
@@ -180,6 +187,15 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* Skill;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* NoHandAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* SmaterializeAnimation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* MaterializeAnimation;
+
 	//Audio
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
 		class UAudioComponent* SoundComponent;
@@ -201,8 +217,9 @@ protected:
 
 	bool IsJumping;
 	bool IsSmashing;
-	bool IsOutOfControl = false;
 	bool IsFaceRight;
+	
+	bool HasNoHand = false;
 
-
+	void SetAnimationIdleNoHand(class UPaperFlipbook* NoHand);
 };

@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 #include "DeathRunnersCpp.h"
+#include "PaperFlipbookComponent.h"
 #include "GrapplePlayer.h"
 #include "Hand.h"
 
@@ -49,8 +50,11 @@ void AGrapplePlayer::SpecialAbility()
 				FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 
 				hand->SetDirectionToGo(directionToGo, this);
+				
 				UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
 				SpecialAbilityIsReady = false;
+				IsOutOfControl = true;
+				//SetAnimationIdleNoHand(WithNoHand);
 				GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 			}
 			else
@@ -85,4 +89,5 @@ void AGrapplePlayer::LogY(float value)
 		LastAxisY = -value;
 	}
 }
+
 

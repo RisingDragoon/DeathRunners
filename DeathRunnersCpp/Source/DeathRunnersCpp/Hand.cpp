@@ -42,14 +42,23 @@ void AHand::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 		//UE_LOG(LogTemp, Warning, TEXT("SweepResult.Location x= %f,y = %f,  z=%f"), SweepResult.Location.X, SweepResult.Location.Y, SweepResult.Location.Z);
 		if (GrapplePlayer)
 		{
+			//animazione di smaterializza
+			GrapplePlayer->StartAnimation(PlayerAnimation::Smaterialize);
 			FVector location = FVector(SweepResult.Location.X, 0, SweepResult.Location.Z + 100);
-			GrapplePlayer->SetActorLocation(location);
+			GrapplePlayer->LocationToTeleport = location;
+			//GrapplePlayer->SetActorLocation(location);
 			Destroy();
 		}
+	}
+	else
+	{
+		if (GrapplePlayer)
+			GrapplePlayer->IsOutOfControl = false;
 	}
 	AGrapplePlayer* HitPlayer = Cast<AGrapplePlayer>(OtherActor);
 	if (!HitPlayer)
 	{
+
 		Destroy();
 	}
 }

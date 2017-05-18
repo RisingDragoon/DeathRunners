@@ -15,6 +15,10 @@ ABasePlayer::ABasePlayer()
 	GetSprite()->SetIsReplicated(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
 	TimerSpecialAbility = FTimerHandle();
+	TimerFalling = FTimerHandle();
+	TimerEndAnimation = FTimerHandle();
+	TimerGainControl = FTimerHandle();
+
 	UCapsuleComponent* capsule = GetCapsuleComponent();
 	capsule->OnComponentBeginOverlap.__Internal_AddDynamic(this, &ABasePlayer::SetPlayerToSmash, FName("SetPlayerToSmash"));
 	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash, FName("ResetPlayerToSmash"));
@@ -137,6 +141,12 @@ void ABasePlayer::MoveRightOrLeft(float value)
 			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
 		}
 	}
+}
+
+void ABasePlayer::SetAnimationIdleNoHand(UPaperFlipbook * NoHand)
+{
+	HasNoHand = true;
+	NoHandAnimation = NoHand;
 }
 
 void ABasePlayer::ThrowSmash()
@@ -287,6 +297,18 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 			timeOfAnimation = Skill->GetTotalDuration();
 			break;
 		}
+	case PlayerAnimation::Smaterialize:
+		if (SmaterializeAnimation)
+		{
+			timeOfAnimation = SmaterializeAnimation->GetTotalDuration();
+			break;
+		}
+	case PlayerAnimation::Materialize:
+		if (MaterializeAnimation)
+		{
+			timeOfAnimation = MaterializeAnimation->GetTotalDuration();
+			break;
+		}
 	}
 	if (SelectedAnimation != animazione)
 	{
@@ -304,7 +326,22 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 void ABasePlayer::EndAnimation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
-	SelectedAnimation = PlayerAnimation::Nothing;
+	if (SelectedAnimation == PlayerAnimation::Smaterialize)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Teleport"));
+		SetActorLocation(LocationToTeleport);
+		StartAnimation(PlayerAnimation::Materialize);
+	}
+	else if (SelectedAnimation == PlayerAnimation::Materialize)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("materializza"));
+		IsOutOfControl = false;
+		SelectedAnimation = PlayerAnimation::Nothing;
+	}
+	else
+	{
+		SelectedAnimation = PlayerAnimation::Nothing;
+	}
 }
 
 void ABasePlayer::SpecialAbility()
@@ -431,6 +468,24 @@ void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 			SelectedFlipbook = Skill;
 		}
 		break;
+	case PlayerAnimation::Smaterialize:
+		if (SmaterializeAnimation)
+		{
+			SelectedFlipbook = SmaterializeAnimation;
+		}
+		break;
+	case PlayerAnimation::Materialize:
+		if (MaterializeAnimation)
+		{
+			SelectedFlipbook = MaterializeAnimation;
+		}
+		break;
+	case PlayerAnimation::NoHand:
+		if (NoHandAnimation)
+		{
+			SelectedFlipbook = NoHandAnimation;
+		}
+		break;
 	}
 }
 
@@ -452,6 +507,10 @@ void ABasePlayer::UpdateAnimation()
 		{
 			DesiredAnimation = Idle;
 		}
+	}
+	else if (HasNoHand)
+	{
+		DesiredAnimation = NoHandAnimation;
 	}
 	else if (IsFalling)
 	{

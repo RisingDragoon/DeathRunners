@@ -36,10 +36,6 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 		float MinValueShot = 40;
 
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
-		//class UPaperFlipbook* Skill;
-
-
 	FVector SpawnPosition;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
