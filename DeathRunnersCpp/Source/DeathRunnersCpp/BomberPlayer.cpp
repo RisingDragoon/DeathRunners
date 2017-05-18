@@ -27,8 +27,9 @@ void ABomberPlayer::SpecialAbility()
 			//World->SpawnActor<ABomb>(BombBlueprint, location, FRotator::ZeroRotator, SpawnParams);
 		}
 		StartAnimation(PlayerAnimation::Skill);
+		SetSounds(PlayerAnimation::Skill);
 		UE_LOG(LogTemp, Warning, TEXT("Usata bomba"));
-		SpecialAbilityIsReady = false;
+		SpecialAbilityIsReady = false; 
 		GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 	}
 }

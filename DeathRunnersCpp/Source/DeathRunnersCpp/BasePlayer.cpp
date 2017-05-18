@@ -44,7 +44,6 @@ void ABasePlayer::Jump()
 {
 	Super::Jump();
 	SetSounds(PlayerAnimation::JumpStart);
-	PlaySound(SoundComponent);
 }
 
 void ABasePlayer::SetSounds(PlayerAnimation animation)
@@ -52,38 +51,35 @@ void ABasePlayer::SetSounds(PlayerAnimation animation)
 	switch (animation)
 	{
 	case PlayerAnimation::Smash:
+		SoundComponent->SetSound(SmashAudio);
 		break;
 	case PlayerAnimation::Stun:
+		SoundComponent->SetSound(StunAudio);
 		break;
 	case PlayerAnimation::JumpStart:
 		SoundComponent->SetSound(JumpAudio);
 		break;
 	case PlayerAnimation::JumpEnd:
-		
 		break;
 	case PlayerAnimation::RunStart:
-		
 		break;
 	case PlayerAnimation::RunEnd:
-		
 		break;
 	case PlayerAnimation::RunChangeDirection:
-		
 		break;
 	case PlayerAnimation::JumpChangeDirection:
-		
 		break;
 	case PlayerAnimation::Die:
-		
 		break;
 	case PlayerAnimation::DropChangeDirection:
-		
 		break;
 	case PlayerAnimation::Skill:
+		SoundComponent->SetSound(SpecialAbilityAudio);
 		break;
 	default:
 		break;
 	}
+	PlaySound();
 }
 void ABasePlayer::ChargeSmash()
 {
@@ -159,6 +155,7 @@ void ABasePlayer::ThrowSmash()
 		//float duration = Smash->GetTotalDuration();
 		//GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
 		StartAnimation(PlayerAnimation::Smash);
+		SetSounds(PlayerAnimation::Smash);
 		if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)
 		{
 			if (PlayerToSmash->IsJumping)
@@ -348,9 +345,9 @@ void ABasePlayer::SpecialAbility()
 {
 }
 
-void ABasePlayer::PlaySound(UAudioComponent* sound)
+void ABasePlayer::PlaySound()
 {
-	sound->Play(0.0);
+	SoundComponent->Play(0.0);
 }
 
 void ABasePlayer::Suicide()
@@ -605,5 +602,7 @@ void ABasePlayer::LoseControl()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s Loses control"), *GetName());
 	IsOutOfControl = true;
+	StartAnimation(PlayerAnimation::Stun);
+	SetSounds(PlayerAnimation::Stun);
 	GetWorld()->GetTimerManager().SetTimer(TimerGainControl, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
 }

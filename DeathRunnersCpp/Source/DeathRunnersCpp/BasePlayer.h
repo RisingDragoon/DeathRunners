@@ -101,7 +101,7 @@ public:
 		float DeadZoneDown = -0.4f;
 	float AppliedForce = 0;
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
-		virtual void PlaySound(UAudioComponent* sound);
+		virtual void PlaySound();
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void Suicide();
@@ -202,6 +202,15 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
 		class USoundBase* JumpAudio=nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class USoundBase* SmashAudio = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class USoundBase* StunAudio = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class USoundBase* SpecialAbilityAudio = nullptr;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class USoundBase* IdleAudio = nullptr;
+
 	
 	void ThrowSmash();
 

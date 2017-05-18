@@ -45,16 +45,13 @@ void AGrapplePlayer::SpecialAbility()
 
 			if (value > MinValueShot)
 			{
-				//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
 				AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator(0, 0, 0));
 				FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
-
 				hand->SetDirectionToGo(directionToGo, this);
-				
 				UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
 				SpecialAbilityIsReady = false;
 				IsOutOfControl = true;
-				//SetAnimationIdleNoHand(WithNoHand);
+				SetSounds(PlayerAnimation::Skill);
 				GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 			}
 			else

@@ -16,6 +16,7 @@ void ADoubleJumpPlayer::Jump()
 		if (SpecialAbilityIsReady)
 		{
 			StartAnimation(PlayerAnimation::Skill);
+			SetSounds(PlayerAnimation::Skill);
 		}
 	}
 	//UE_LOG(LogTemp, Warning, TEXT("salto %d"), JumpCurrentCount);

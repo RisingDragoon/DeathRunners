@@ -30,6 +30,7 @@ void AGunPlayer::StartAnimationShot()
 
 void AGunPlayer::EndAnimationShot()
 {
+	SetSounds(PlayerAnimation::Skill);
 	UE_LOG(LogTemp, Warning, TEXT("Fine animazione"));
 	SelectedAnimation = PlayerAnimation::Nothing;
 	SpawnPosition = GetActorLocation() + SpawnPositionOffset;
