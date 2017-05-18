@@ -445,6 +445,9 @@ void ABasePlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	//ParticleSystemCharging->SetActive(false);
+
+	ADeathRunnersCppGameMode* gameMode = (ADeathRunnersCppGameMode*)GetWorld()->GetAuthGameMode();
+	gameMode->AddPlayer( this );
 }
 
 void ABasePlayer::UpdateCharacter()
