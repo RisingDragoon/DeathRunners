@@ -11,7 +11,6 @@ AHand::AHand()
 	sprite->OnComponentBeginOverlap.AddDynamic(this, &AHand::OnBeginOverlap);
 }
 
-
 void AHand::Tick(float DeltaSeconds)
 {
 	if (Move)
