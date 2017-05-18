@@ -51,7 +51,7 @@ void AGrapplePlayer::SpecialAbility()
 				hand->SetDirectionToGo(directionToGo, this);
 				UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
 				SpecialAbilityIsReady = false;
-				GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+				GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 			}
 			else
 			{

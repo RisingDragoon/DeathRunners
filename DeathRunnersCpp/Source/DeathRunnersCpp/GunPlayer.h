@@ -31,4 +31,8 @@ public:
 		UClass* Projectile;
 
 	float ShotVelocity = 20;
+
+	void StartAnimationShot();
+
+	void EndAnimationShot();
 };

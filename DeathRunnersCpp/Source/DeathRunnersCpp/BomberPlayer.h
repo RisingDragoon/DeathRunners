@@ -20,7 +20,5 @@ public:
 	
 	UPROPERTY(EditAnywhere, Category = "Spawn")
 		TSubclassOf<class ABomb> BombBlueprint;
-
-	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Spawn)
-		//class UArrowComponent* SpawnPoint;
+	
 };

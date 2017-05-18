@@ -11,6 +11,14 @@ ADoubleJumpPlayer::ADoubleJumpPlayer()
 void ADoubleJumpPlayer::Jump()
 {
 	Super::Jump();
+	if (JumpCurrentCount == 1)
+	{
+		if (SpecialAbilityIsReady)
+		{
+			StartAnimation(PlayerAnimation::Skill);
+		}
+	}
+	//UE_LOG(LogTemp, Warning, TEXT("salto %d"), JumpCurrentCount);
 	if (JumpCurrentCount==JumpMaxCount)
 	{
 		StopJumping();
@@ -37,6 +45,6 @@ void ADoubleJumpPlayer::Tick(float deltaSeconds)
 		SpecialAbilityIsReady = false;
 		JumpMaxCount = 1;
 		JumpMaxHoldTime = 0.0;
-		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 	}
 }

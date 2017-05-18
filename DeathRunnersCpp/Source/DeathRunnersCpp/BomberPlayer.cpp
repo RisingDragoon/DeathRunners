@@ -21,13 +21,14 @@ void ABomberPlayer::SpecialAbility()
 		UWorld* const World = GetWorld();
 		if (World) 
 		{
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Instigator = this;
+			//FActorSpawnParameters SpawnParams;
+			//SpawnParams.Instigator = this;
 			//FVector location = SpawnPoint
 			//World->SpawnActor<ABomb>(BombBlueprint, location, FRotator::ZeroRotator, SpawnParams);
 		}
+		StartAnimation(PlayerAnimation::Skill);
 		UE_LOG(LogTemp, Warning, TEXT("Usata bomba"));
 		SpecialAbilityIsReady = false;
-		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+		GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
 	}
 }

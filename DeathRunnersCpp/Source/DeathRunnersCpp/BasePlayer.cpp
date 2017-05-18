@@ -14,11 +14,11 @@ ABasePlayer::ABasePlayer()
 {
 	GetSprite()->SetIsReplicated(true);
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
-	Timer = FTimerHandle();
+	TimerSpecialAbility = FTimerHandle();
 	UCapsuleComponent* capsule = GetCapsuleComponent();
 	capsule->OnComponentBeginOverlap.__Internal_AddDynamic(this, &ABasePlayer::SetPlayerToSmash, FName("SetPlayerToSmash"));
 	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash, FName("ResetPlayerToSmash"));
-	SetSounds();
+	SoundComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundComponent"));
 
 	//static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Fire.P_Fire'"));
 	//ParticleSystemCharging = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
@@ -39,17 +39,47 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 void ABasePlayer::Jump()
 {
 	Super::Jump();
-	PlaySound(JumpSound);
+	SetSounds(PlayerAnimation::JumpStart);
+	PlaySound(SoundComponent);
 }
-void ABasePlayer::SetSounds()
-{
-	//static ConstructorHelpers::FObjectFinder<USoundBase> smashSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
-	//SmashSound = CreateDefaultSubobject<UAudioComponent>(TEXT("SmashSound"));
-	//SmashSound->SetSound(smashSound.Object);
 
-	//static ConstructorHelpers::FObjectFinder<USoundBase> jumpSound(TEXT("SoundWave'/Game/Sounds/dr_jump1.dr_jump1'"));
-	JumpSound = CreateDefaultSubobject<UAudioComponent>(TEXT("JumpSound"));
-	//JumpSound->SetSound(jumpSound.Object);
+void ABasePlayer::SetSounds(PlayerAnimation animation)
+{
+	switch (animation)
+	{
+	case PlayerAnimation::Smash:
+		break;
+	case PlayerAnimation::Stun:
+		break;
+	case PlayerAnimation::JumpStart:
+		SoundComponent->SetSound(JumpAudio);
+		break;
+	case PlayerAnimation::JumpEnd:
+		
+		break;
+	case PlayerAnimation::RunStart:
+		
+		break;
+	case PlayerAnimation::RunEnd:
+		
+		break;
+	case PlayerAnimation::RunChangeDirection:
+		
+		break;
+	case PlayerAnimation::JumpChangeDirection:
+		
+		break;
+	case PlayerAnimation::Die:
+		
+		break;
+	case PlayerAnimation::DropChangeDirection:
+		
+		break;
+	case PlayerAnimation::Skill:
+		break;
+	default:
+		break;
+	}
 }
 void ABasePlayer::ChargeSmash()
 {
@@ -147,7 +177,7 @@ void ABasePlayer::ReceiveShot()
 
 void ABasePlayer::EnableSpecialAbility()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("Abilita Pronta"));
+	UE_LOG(LogTemp, Warning, TEXT("Abilita Pronta"));
 	SpecialAbilityIsReady = true;
 }
 
@@ -174,7 +204,7 @@ void ABasePlayer::StartFalling()
 		UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
 		LaunchCharacter(FVector(0.0f, 0.0f, -BaseSmashForce), false, false);
 	}
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerFalling, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
 
 void ABasePlayer::StopFalling()
@@ -187,7 +217,6 @@ void ABasePlayer::StopFalling()
 
 void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 {
-	InAnimation = true;
 	float timeOfAnimation = 0;
 
 	switch (animazione)
@@ -252,13 +281,29 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 			timeOfAnimation = DropChangeDirection->GetTotalDuration();
 		}
 		break;
+	case PlayerAnimation::Skill:
+		if (Skill)
+		{
+			timeOfAnimation = Skill->GetTotalDuration();
+			break;
+		}
 	}
-	SelectedAnimation = animazione;
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EndAnimation, timeOfAnimation, false);
+	if (SelectedAnimation != animazione)
+	{
+		SelectedAnimation = animazione;
+		UE_LOG(LogTemp, Warning, TEXT("Durata animazione %d"), timeOfAnimation);
+		UE_LOG(LogTemp, Warning, TEXT("StartAnimation"));
+		GetWorld()->GetTimerManager().SetTimer(TimerEndAnimation, this, &ABasePlayer::EndAnimation, timeOfAnimation, false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("SelectedAnimation == animazione"));
+	}
 }
 
 void ABasePlayer::EndAnimation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
 	SelectedAnimation = PlayerAnimation::Nothing;
 }
 
@@ -380,6 +425,12 @@ void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 			SelectedFlipbook = DropChangeDirection;
 		}
 		break;
+	case PlayerAnimation::Skill:
+		if (Skill)
+		{
+			SelectedFlipbook = Skill;
+		}
+		break;
 	}
 }
 
@@ -492,5 +543,5 @@ void ABasePlayer::LoseControl()
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s Loses control"), *GetName());
 	IsOutOfControl = true;
-	GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
+	GetWorld()->GetTimerManager().SetTimer(TimerGainControl, this, &ABasePlayer::RegainControl, FallingTimeRate, false);
 }

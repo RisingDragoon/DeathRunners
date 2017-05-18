@@ -25,7 +25,8 @@ enum class PlayerAnimation : uint8
 	RunChangeDirection,
 	JumpChangeDirection,
 	Hit,
-	DropChangeDirection
+	DropChangeDirection,
+	Skill
 };
 
 UCLASS()
@@ -49,7 +50,10 @@ public:
 
 	float SmashForce = 0.0;
 
-	FTimerHandle Timer;
+	FTimerHandle TimerSpecialAbility;
+	FTimerHandle TimerFalling;
+	FTimerHandle TimerEndAnimation;
+	FTimerHandle TimerGainControl;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 	float FallingTimeRate = 1.0;
@@ -110,8 +114,6 @@ public:
 	void StartAnimation(PlayerAnimation animazione);
 
 	void EndAnimation();
-
-	bool InAnimation = false;
 
 	PlayerAnimation SelectedAnimation = PlayerAnimation::Nothing;
 
@@ -175,16 +177,22 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 	class UPaperFlipbook* Die;//ok
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* Skill;
+
 	//Audio
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
-		class UAudioComponent* JumpSound;
+		class UAudioComponent* SoundComponent;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
+		class USoundBase* JumpAudio=nullptr;
 	
 	void ThrowSmash();
 
 	void RegainControl();
-
-	void SetSounds();
-
+	
+	void SetSounds(PlayerAnimation animation);
+	
 	virtual void Jump() override;
 
 	virtual void SpecialAbility();
@@ -195,4 +203,6 @@ protected:
 	bool IsSmashing;
 	bool IsOutOfControl = false;
 	bool IsFaceRight;
+
+
 };

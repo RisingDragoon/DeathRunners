@@ -3,6 +3,7 @@
 #include "DeathRunnersCpp.h"
 #include "GunPlayer.h"
 #include "DrawDebugHelpers.h"
+#include "PaperFlipbookComponent.h"
 #include "Projectile.h"
 
 AGunPlayer::AGunPlayer()
@@ -15,27 +16,41 @@ void AGunPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCom
 	playerInputComponent->BindAction("GunOrGrapple", IE_Released, this, &AGunPlayer::SpecialAbility);
 }
 
+void AGunPlayer::StartAnimationShot()
+{
+	float timeOfAnimation = 0;
+	if (Skill)
+	{
+		timeOfAnimation = Skill->GetTotalDuration();
+		SelectedAnimation = PlayerAnimation::Skill;
+		UE_LOG(LogTemp, Warning, TEXT("Animazione skill durata= %d"),timeOfAnimation);
+		GetWorld()->GetTimerManager().SetTimer(TimerEndAnimation, this, &AGunPlayer::EndAnimationShot, timeOfAnimation, false);
+	}
+}
+
+void AGunPlayer::EndAnimationShot()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Fine animazione"));
+	SelectedAnimation = PlayerAnimation::Nothing;
+	SpawnPosition = GetActorLocation() + SpawnPositionOffset;
+	FVector direction = IsFaceRight ? FVector(1, 0, 0) : FVector(-1, 0, 0);
+	FVector EndTrace = SpawnPosition + direction * ShotVelocity;
+	FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
+	AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator(0, 0, 0));
+	proj->SetDirectionToGo(directionToGo);
+	SpecialAbilityIsReady = false;
+	GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+}
+
 void AGunPlayer::BeginPlay()
 {
 	Super::BeginPlay();
-	//UE_LOG(LogTemp, Warning, TEXT("GetActorLocation x= %f,y = %f,  z=%f"), GetActorLocation().X, GetActorLocation().Y, GetActorLocation().Z);
-	//SpawnPosition = GetActorLocation() + SpawnPositionOffset;
-	//UE_LOG(LogTemp, Warning, TEXT("SpawnPosition x= %f,y = %f,  z=%f"), SpawnPosition.X, SpawnPosition.Y, SpawnPosition.Z);
 }
 
 void AGunPlayer::SpecialAbility()
 {
 	if (SpecialAbilityIsReady && PlayerToSmash == nullptr)
 	{
-		SpawnPosition = GetActorLocation() + SpawnPositionOffset;
-		FVector direction = IsFaceRight ? FVector(1, 0, 0) : FVector(-1, 0, 0);
-		FVector EndTrace = SpawnPosition + direction * ShotVelocity;
-		//DrawDebugLine(GetWorld(), SpawnPosition, EndTrace, FColor(255, 0, 0), true, 0.f, 0, 5.f);
-		FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
-		AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator(0, 0, 0));
-		proj->SetDirectionToGo(directionToGo);
-		//UE_LOG(LogTemp, Warning, TEXT("Pistola usata"));
-		SpecialAbilityIsReady = false;
-		GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+		StartAnimationShot();
 	}
 }
