@@ -25,11 +25,13 @@ TArray<ABasePlayer*> ADeathRunnersCppGameMode::GetPlayers()
 void ADeathRunnersCppGameMode::AddPlayer( ABasePlayer* player )
 {
 	players.Add( player );
+	UE_LOG( LogTemp, Warning, TEXT( "%s added to player array. Player count: %d" ), *GetName(), players.Num() );
 }
 
 void ADeathRunnersCppGameMode::RemovePlayer( ABasePlayer* player )
 {
 	players.Remove( player );
+	UE_LOG( LogTemp, Warning, TEXT( "%s removed from player array. Player count: %d" ), *GetName(), players.Num() );
 
 	if ( players.Num() == 1 )
 	{
