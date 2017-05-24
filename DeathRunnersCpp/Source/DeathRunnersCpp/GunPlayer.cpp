@@ -13,7 +13,7 @@ AGunPlayer::AGunPlayer()
 void AGunPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	Super::SetupPlayerInputComponent(playerInputComponent);
-	playerInputComponent->BindAction("GunOrGrapple", IE_Released, this, &AGunPlayer::SpecialAbility);
+	playerInputComponent->BindAction("SpecialAbility", IE_Released, this, &AGunPlayer::SpecialAbility);
 }
 
 void AGunPlayer::StartAnimationShot()
@@ -31,16 +31,24 @@ void AGunPlayer::StartAnimationShot()
 void AGunPlayer::EndAnimationShot()
 {
 	SetSounds(PlayerAnimation::Skill);
-	UE_LOG(LogTemp, Warning, TEXT("Fine animazione"));
+	UE_LOG(LogTemp, Warning, TEXT("Fine animazione shot"));
 	SelectedAnimation = PlayerAnimation::Nothing;
+
 	SpawnPosition = GetActorLocation() + SpawnPositionOffset;
 	FVector direction = IsFaceRight ? FVector(1, 0, 0) : FVector(-1, 0, 0);
 	FVector EndTrace = SpawnPosition + direction * ShotVelocity;
 	FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
 	AProjectile* proj = GetWorld()->SpawnActor<AProjectile>(Projectile, SpawnPosition, FRotator(0, 0, 0));
-	proj->SetDirectionToGo(directionToGo);
-	SpecialAbilityIsReady = false;
-	GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+	if (proj)
+	{
+		proj->SetDirectionToGo(directionToGo);
+		SpecialAbilityIsReady = false;
+		GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("AProjectile non spawnato"));
+	}
 }
 
 void AGunPlayer::BeginPlay()

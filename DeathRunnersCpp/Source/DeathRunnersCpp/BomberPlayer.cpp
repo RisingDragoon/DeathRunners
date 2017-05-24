@@ -9,7 +9,7 @@ void ABomberPlayer::SetupPlayerInputComponent(class UInputComponent* playerInput
 {
 	UE_LOG(LogTemp, Warning, TEXT("input setup"));
 	Super::SetupPlayerInputComponent(playerInputComponent);
-	playerInputComponent->BindAction("Bomb", IE_Released, this, &ABomberPlayer::SpecialAbility);
+	playerInputComponent->BindAction("SpecialAbility", IE_Released, this, &ABomberPlayer::SpecialAbility);
 	//SpawnPoint = CreateDefaultSubobject<UArrowComponent>(TEXT("SpawnPoint"));
 	//tatic ConstructorHelpers::FObjectFinder<UBlueprint> ItemBlueprint(TEXT("Blueprint'/Game/Items/Blueprints/BP_ItemTest.BP_ItemTest'"));
 }

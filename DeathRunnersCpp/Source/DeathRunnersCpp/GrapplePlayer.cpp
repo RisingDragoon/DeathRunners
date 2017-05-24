@@ -14,9 +14,7 @@ AGrapplePlayer::AGrapplePlayer()
 void AGrapplePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputComponent)
 {
 	Super::SetupPlayerInputComponent(playerInputComponent);
-	playerInputComponent->BindAction("GunOrGrapple", IE_Released, this, &AGrapplePlayer::SpecialAbility);
-	playerInputComponent->BindAxis("AxisX", this, &AGrapplePlayer::LogX);
-	playerInputComponent->BindAxis("AxisY", this, &AGrapplePlayer::LogY);
+	playerInputComponent->BindAction("SpecialAbility", IE_Released, this, &AGrapplePlayer::SpecialAbility);
 }
 
 void AGrapplePlayer::BeginPlay()
@@ -28,63 +26,60 @@ void AGrapplePlayer::SpecialAbility()
 {
 	if (SpecialAbilityIsReady)
 	{
-		if (LastAxisY >= 0)
+		SpawnPosition = GetActorLocation() + SpawnPositionOffset;
+		FVector direction = IsFaceRight ? FVector(1, 0, 1) : FVector(-1, 0, 1);
+		FVector EndTrace = SpawnPosition + direction * ShotVelocity;
+		FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
+
+		AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator(0, 0, 0));
+		if (hand)
 		{
-			FVector direzione = FVector(LastAxisX, 0, LastAxisY);
-			SpawnPosition = GetActorLocation() + SpawnPositionOffset;
-			FVector EndTrace = SpawnPosition + direzione * 300;
-			direzione = SpawnPosition + direzione;
-
-			float base = EndTrace.X - SpawnPosition.X;
-			float altezza = EndTrace.Z - SpawnPosition.Z;
-			base = (base > 0) ? base : -base;
-			altezza = (altezza > 0) ? altezza : -altezza;
-
-			float value = sqrt(pow(2, (base)) + pow(2, (altezza)));
-			//UE_LOG(LogTemp, Warning, TEXT("Modulo %f"), value);
-
-			if (value > MinValueShot)
+			if (!IsFaceRight)
 			{
-				AHand* hand = GetWorld()->SpawnActor<AHand>(Hand, SpawnPosition, FRotator(0, 0, 0));
-				FVector directionToGo = FVector(EndTrace.X - SpawnPosition.X, 0, EndTrace.Z - SpawnPosition.Z);
-				hand->SetDirectionToGo(directionToGo, this);
-				UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
-				SpecialAbilityIsReady = false;
-				IsOutOfControl = true;
-				SetSounds(PlayerAnimation::Skill);
-				GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+				UActorComponent* comp = hand->GetComponentByClass(UPaperFlipbookComponent::StaticClass());
+				UPaperFlipbookComponent* flip = (UPaperFlipbookComponent*)comp;
+				if (flip)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("MANO RUOTATA"));
+					flip->SetRelativeRotation(FRotator(0,180,0));
+				}
 			}
-			else
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Nop"));
-			}
+			hand->SetDirectionToGo(directionToGo, this);
+		
+			UE_LOG(LogTemp, Warning, TEXT("Mano lanciata"));
+			SpecialAbilityIsReady = false;
+			IsOutOfControl = true;
+			SetSounds(PlayerAnimation::Skill);
+			GetWorld()->GetTimerManager().SetTimer(TimerSpecialAbility, this, &ABasePlayer::EnableSpecialAbility, AbilityCooldown, false);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Mano non spawnata"));
 		}
 	}
 }
 
-
-void AGrapplePlayer::LogX(float value)
-{
-	if (value == 0 && LastAxisY == 0)
-	{
-		return;
-	}
-	if (value != LastAxisX)
-	{
-		LastAxisX = value;
-	}
-}
-
-void AGrapplePlayer::LogY(float value)
-{
-	if (value == 0 && LastAxisX == 0)
-	{
-		return;
-	}
-	if (value != LastAxisY)
-	{
-		LastAxisY = -value;
-	}
-}
-
-
+//
+//void AGrapplePlayer::LogX(float value)
+//{
+//	if (value == 0 && LastAxisY == 0)
+//	{
+//		return;
+//	}
+//	if (value != LastAxisX)
+//	{
+//		LastAxisX = value;
+//	}
+//}
+//
+//void AGrapplePlayer::LogY(float value)
+//{
+//	if (value == 0 && LastAxisX == 0)
+//	{
+//		return;
+//	}
+//	if (value != LastAxisY)
+//	{
+//		LastAxisY = -value;
+//	}
+//}

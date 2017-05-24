@@ -22,23 +22,26 @@ public:
 
 	void SetupPlayerInputComponent(class UInputComponent* InputComponent) override;
 	
-	void LogX(float value);
+	//void LogX(float value);
 
-	void LogY(float value);
+	//void LogY(float value);
 
-	float LastAxisX = 0;
+	//float LastAxisX = 0;
 
-	float LastAxisY = 0;
+	//float LastAxisY = 0;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 		FVector SpawnPositionOffset;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-		float MinValueShot = 40;
+	//UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+	//	float MinValueShot = 40;
 
 	FVector SpawnPosition;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		UClass* Hand;
 	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float ShotVelocity = 20;
+
 };

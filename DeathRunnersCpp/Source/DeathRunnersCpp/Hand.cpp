@@ -21,14 +21,9 @@ void AHand::Tick(float DeltaSeconds)
 
 void AHand::SetDirectionToGo(FVector direction, AGrapplePlayer* player)
 {
-	DirectionToGo = FVector(direction.X, 0, direction.Z) * 0.05;
+	DirectionToGo = FVector(direction.X, 0, direction.Z);
 	Move = true;
 	GrapplePlayer = player;
-	//0.01  lento
-	//PlayerName = playerName;
-	//DirectionToGo = FVector(direction.X/300, 0,direction.Z/300);
-	//SetActorLocation(direction, true);
-	//UE_LOG(LogTemp, Warning, TEXT("directionToGo x= %f,y = %f,  z=%f"), direction.X, direction.Y, direction.Z);
 }
 
 void AHand::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
@@ -49,11 +44,17 @@ void AHand::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* Oth
 			//GrapplePlayer->SetActorLocation(location);
 			Destroy();
 		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Non ha il grappleplayer"));
+		}
 	}
 	else
 	{
 		if (GrapplePlayer)
+		{
 			GrapplePlayer->IsOutOfControl = false;
+		}
 	}
 	AGrapplePlayer* HitPlayer = Cast<AGrapplePlayer>(OtherActor);
 	if (!HitPlayer)

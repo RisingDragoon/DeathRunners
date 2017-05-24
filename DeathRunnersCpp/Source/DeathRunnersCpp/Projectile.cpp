@@ -26,7 +26,6 @@ void AProjectile::SetDirectionToGo(FVector direction)
 
 void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-
 	ABasePlayer* HitPlayer = Cast<ABasePlayer>(OtherActor);
 	AGunPlayer* gunPlayer = Cast<AGunPlayer>(HitPlayer);
 	

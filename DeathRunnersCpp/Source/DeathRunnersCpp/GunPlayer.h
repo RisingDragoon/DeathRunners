@@ -30,7 +30,8 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite)
 		UClass* Projectile;
 
-	float ShotVelocity = 20;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float ShotVelocity = 20;
 
 	void StartAnimationShot();
 
