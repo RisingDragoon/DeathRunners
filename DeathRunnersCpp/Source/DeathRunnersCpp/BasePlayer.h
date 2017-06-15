@@ -62,7 +62,7 @@ public:
 	float FallingTimeRate = 1.0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly)
-		bool CanSmash = false;//VisibleAnywhere
+		bool CanSmash = false;
 
 	ABasePlayer* PlayerToSmash = nullptr;
 
@@ -79,18 +79,18 @@ public:
 
 	void LoseControl();
 
-	void ChargeSmash();
+	//SmashCaricato||void ChargeSmash();
 
 	bool IsFalling;
 
-	bool IsCharging;
+	//SmashCaricato||bool IsCharging;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 	//	float SmashCharge = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 	float MaxSmashForce = 450;
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-	float SmashChargeSpeed = 20;
+	//SmashCaricato||UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		//SmashCaricato||float SmashChargeSpeed = 20;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 	float SmashForceLevel = 350;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
@@ -225,8 +225,8 @@ protected:
 	void MoveRightOrLeft(float value);
 
 	bool IsJumping;
-	bool IsSmashing;
 	bool IsFaceRight;
+	bool IsSmashing;
 	
 	bool HasNoHand = false;
 

@@ -36,8 +36,9 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 {
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
 	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
-	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ChargeSmash);
-	playerInputComponent->BindAction("Smash", IE_Released, this, &ABasePlayer::ThrowSmash);
+	//playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ChargeSmash);
+	//playerInputComponent->BindAction("Smash", IE_Released, this, &ABasePlayer::ThrowSmash);
+	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ThrowSmash);
 }
 
 void ABasePlayer::Jump()
@@ -81,15 +82,15 @@ void ABasePlayer::SetSounds(PlayerAnimation animation)
 	}
 	PlaySound();
 }
-void ABasePlayer::ChargeSmash()
-{
+//SmashCaricato||void ABasePlayer::ChargeSmash()
+//SmashCaricato||{
 	//UE_LOG(LogTemp, Warning, TEXT("ChargeSmash"));
 	//ParticleSystemCharging->SetActive(true);
 	//ParticleSystemCharging->Activate();
-	IsCharging = true;
+	//SmashCaricato||IsCharging = true;
 	//SmashForce += SmashChargeSpeed;
 	//UE_LOG(LogTemp, Warning, TEXT("potenza pugno : FORZA %d SPEED %d"),SmashForce, SmashChargeSpeed);
-}
+	//SmashCaricato||}
 
 void ABasePlayer::MoveRightOrLeft(float value)
 {
@@ -127,15 +128,15 @@ void ABasePlayer::MoveRightOrLeft(float value)
 			}
 		}
 
-		if (IsCharging && !IsJumping)
-		{
+		//SmashCaricato||if (IsCharging && !IsJumping)
+		//SmashCaricato||{
 			//UE_LOG(LogTemp, Warning, TEXT("Carico e mi muovo di meta"));
-			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value / 2);
-		}
-		else
-		{
+			//SmashCaricato||AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value / 2);
+			//SmashCaricato||}
+			//SmashCaricato||else
+			//SmashCaricato||{
 			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
-		}
+			//SmashCaricato||}
 	}
 }
 
@@ -148,7 +149,7 @@ void ABasePlayer::SetAnimationIdleNoHand(UPaperFlipbook * NoHand)
 void ABasePlayer::ThrowSmash()
 {
 	//ParticleSystemCharging->SetActive(false);
-	IsCharging = false;
+	//SmashCaricato||IsCharging = false;
 	if (IsJumping)
 	{
 		//IsSmashing = true;
@@ -541,11 +542,11 @@ void ABasePlayer::Tick(float deltaSeconds)
 	UpdateCharacter();
 	//ParticleSystemCharging->SetRelativeLocation(GetActorLocation());
 	IsJumping = GetVelocity().Z != 0.0f;
-	if (IsCharging && SmashForce < MaxSmashForce)
-	{
-		SmashForce += SmashChargeSpeed;
+	//SmashCaricato||if (IsCharging && SmashForce < MaxSmashForce)
+	//SmashCaricato||{
+	//SmashCaricato||SmashForce += SmashChargeSpeed;
 		//UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
-	}
+		//SmashCaricato||}
 }
 
 void ABasePlayer::BeginPlay()
