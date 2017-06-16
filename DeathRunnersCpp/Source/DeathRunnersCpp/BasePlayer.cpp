@@ -36,13 +36,17 @@ void ABasePlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCo
 {
 	playerInputComponent->BindAxis("MoveRightOrLeft", this, &ABasePlayer::MoveRightOrLeft);
 	playerInputComponent->BindAction("Jump", IE_Pressed, this, &ABasePlayer::Jump);
-	//playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ChargeSmash);
-	//playerInputComponent->BindAction("Smash", IE_Released, this, &ABasePlayer::ThrowSmash);
+	playerInputComponent->BindAction("ChargeSmash", IE_Pressed, this, &ABasePlayer::ChargeSmash);
+	playerInputComponent->BindAction("ChargeSmash", IE_Released, this, &ABasePlayer::StopCharging);
 	playerInputComponent->BindAction("Smash", IE_Pressed, this, &ABasePlayer::ThrowSmash);
 }
 
 void ABasePlayer::Jump()
 {
+	if (IsCharging)
+	{
+		StopCharging();
+	}
 	Super::Jump();
 	SetSounds(PlayerAnimation::JumpStart);
 }
@@ -82,15 +86,24 @@ void ABasePlayer::SetSounds(PlayerAnimation animation)
 	}
 	PlaySound();
 }
-//SmashCaricato||void ABasePlayer::ChargeSmash()
-//SmashCaricato||{
-	//UE_LOG(LogTemp, Warning, TEXT("ChargeSmash"));
+
+void ABasePlayer::ChargeSmash()
+{
 	//ParticleSystemCharging->SetActive(true);
 	//ParticleSystemCharging->Activate();
-	//SmashCaricato||IsCharging = true;
-	//SmashForce += SmashChargeSpeed;
-	//UE_LOG(LogTemp, Warning, TEXT("potenza pugno : FORZA %d SPEED %d"),SmashForce, SmashChargeSpeed);
-	//SmashCaricato||}
+	UE_LOG(LogTemp, Warning, TEXT("ChargeSmash"));
+	if (!IsJumping && !IsFalling)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("ChargeSmash Partito"));
+		IsCharging = true;
+	}
+}
+
+void ABasePlayer::StopCharging()
+{
+	UE_LOG(LogTemp, Warning, TEXT("ChargeSmash Terminato"));
+	IsCharging = false;
+}
 
 void ABasePlayer::MoveRightOrLeft(float value)
 {
@@ -128,15 +141,15 @@ void ABasePlayer::MoveRightOrLeft(float value)
 			}
 		}
 
-		//SmashCaricato||if (IsCharging && !IsJumping)
-		//SmashCaricato||{
+		if (IsCharging && !IsJumping)
+		{
 			//UE_LOG(LogTemp, Warning, TEXT("Carico e mi muovo di meta"));
-			//SmashCaricato||AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value / 2);
-			//SmashCaricato||}
-			//SmashCaricato||else
-			//SmashCaricato||{
+			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value / 2);
+		}
+		else
+		{
 			AddMovementInput(FVector(1.0f, 0.0f, 0.0f), value);
-			//SmashCaricato||}
+		}
 	}
 }
 
@@ -148,32 +161,29 @@ void ABasePlayer::SetAnimationIdleNoHand(UPaperFlipbook * NoHand)
 
 void ABasePlayer::ThrowSmash()
 {
-	//ParticleSystemCharging->SetActive(false);
-	//SmashCaricato||IsCharging = false;
+	UE_LOG(LogTemp, Warning, TEXT("ThrowSmash"));
 	if (IsJumping)
 	{
-		//IsSmashing = true;
-		//float duration = Smash->GetTotalDuration();
-		//GetWorld()->GetTimerManager().SetTimer(Timer, this, &ABasePlayer::StopSmashing, duration, false);
+		//StopCharging();
 		StartAnimation(PlayerAnimation::Smash);
 		SetSounds(PlayerAnimation::Smash);
+
 		if (CanSmash && PlayerToSmash != nullptr && !IsFalling && !IsOutOfControl)
 		{
 			if (PlayerToSmash->IsJumping)
 			{
-				//PlaySmashSound();
-				//UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f "), SmashForce);
-				if (SmashForce < BaseSmashForce)
-				{
-					//Applica la forza minima
-					SmashForce = BaseSmashForce;
-				}
+				UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : SmashForce= %f "), SmashForce);
+				//if (SmashForce < BaseSmashForce)
+				//{
+				//	//Applica la forza minima
+				//	SmashForce = BaseSmashForce;
+				//}
 				PlayerToSmash->AppliedForce = SmashForce;
 				PlayerToSmash->StartFalling();
 			}
 		}
+		SmashForce = BaseSmashForce;
 	}
-	SmashForce = 0;
 }
 
 void ABasePlayer::ReceiveShot()
@@ -191,26 +201,28 @@ void ABasePlayer::EnableSpecialAbility()
 
 void ABasePlayer::StartFalling()
 {
-	//UE_LOG(LogTemp, Warning, TEXT("StartFalling"));
 	IsOutOfControl = true;
 	IsFalling = true;
+	StartAnimation(PlayerAnimation::Hit);
 	if (AppliedForce > SmashForceLevel)
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
+		//Pugno caricato
+		UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
 		if (GetCapsuleComponent())
 		{
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 		}
 		else
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Capsule component null"));
+			UE_LOG(LogTemp, Error, TEXT("Errore - Capsule component del player e' null"));
 		}
-		LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), false, false);
+		LaunchCharacter(FVector(0.0f, 0.0f, -AppliedForce), true, true);
 	}
 	else
 	{
+		//Pugno base
 		UE_LOG(LogTemp, Warning, TEXT("PUGNO BASE"));
-		LaunchCharacter(FVector(0.0f, 0.0f, -BaseSmashForce), false, false);
+		LaunchCharacter(FVector(0.0f, 0.0f, -BaseSmashForce), true, true);
 	}
 	GetWorld()->GetTimerManager().SetTimer(TimerFalling, this, &ABasePlayer::StopFalling, FallingTimeRate, false);
 }
@@ -221,6 +233,16 @@ void ABasePlayer::StopFalling()
 	UE_LOG(LogTemp, Warning, TEXT("stop falling"));
 	IsOutOfControl = false;
 	IsFalling = false;
+}
+
+void ABasePlayer::Spike()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Spikato"));
+	int randomic = FMath::RandRange(-10, 10);
+	//float dir = (randomic) ? 10.0 : -10.0;
+	FVector LaunchVelocity = FVector(randomic, 0.0, 1.0) * SpikeLaunchSpeed;
+	LaunchCharacter(LaunchVelocity, true, true);
+	LoseControl();
 }
 
 void ABasePlayer::StartAnimation(PlayerAnimation animazione)
@@ -289,6 +311,12 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 			timeOfAnimation = DropChangeDirection->GetTotalDuration();
 		}
 		break;
+	case PlayerAnimation::Hit:
+		if (Hit)
+		{
+			timeOfAnimation = Hit->GetTotalDuration();
+			break;
+		}
 	case PlayerAnimation::Skill:
 		if (Skill)
 		{
@@ -396,6 +424,7 @@ void ABasePlayer::ResetPlayerToSmash(UPrimitiveComponent* OverlappedComponent, A
 		PlayerToSmash = nullptr;
 	}
 }
+
 void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 {
 	switch (animation)
@@ -466,6 +495,12 @@ void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 			SelectedFlipbook = Skill;
 		}
 		break;
+	case PlayerAnimation::Hit:
+		if (Hit)
+		{
+			SelectedFlipbook = Hit;
+		}
+		break;
 	case PlayerAnimation::Smaterialize:
 		if (SmaterializeAnimation)
 		{
@@ -490,8 +525,6 @@ void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 void ABasePlayer::UpdateAnimation()
 {
 	const FVector PlayerVelocity = GetVelocity();
-	
-	//const float PlayerSpeedSqr = PlayerVelocity.SizeSquared();
 
 	UPaperFlipbook* DesiredAnimation;
 	if (SelectedAnimation != PlayerAnimation::Nothing)
@@ -542,11 +575,11 @@ void ABasePlayer::Tick(float deltaSeconds)
 	UpdateCharacter();
 	//ParticleSystemCharging->SetRelativeLocation(GetActorLocation());
 	IsJumping = GetVelocity().Z != 0.0f;
-	//SmashCaricato||if (IsCharging && SmashForce < MaxSmashForce)
-	//SmashCaricato||{
-	//SmashCaricato||SmashForce += SmashChargeSpeed;
-		//UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : FORZA %f SPEED %f"), SmashForce, SmashChargeSpeed);
-		//SmashCaricato||}
+	if (IsCharging && SmashForce < MaxSmashForce)
+	{
+		SmashForce += SmashChargeSpeed;
+		UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : SmashForce= %f "), SmashForce);
+	}
 }
 
 void ABasePlayer::BeginPlay()
@@ -575,7 +608,6 @@ void ABasePlayer::UpdateCharacter()
 			Controller->SetControlRotation(FRotator(0.0f, 0.0f, 0.0f));
 		}
 	}
-	//UE_LOG(LogTemp, Warning, TEXT("PlayerVelocity Z %f"), PlayerVelocity.Z);
 	if (PlayerVelocity.Z > 0.0f)
 	{
 		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));

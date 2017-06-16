@@ -42,10 +42,11 @@ void ABasePlatform::OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor
 
 		if ( Type == EPlatformType::Spikes )
 		{
-			float dir = HitCharacter->GetActorLocation().X > GetActorLocation().X ? 1.0 : -1.0;
+			HitCharacter->Spike();
+			/*float dir = HitCharacter->GetActorLocation().X > GetActorLocation().X ? 1.0 : -1.0;
 			FVector LaunchVelocity = FVector( dir, 0.0, 1.0 ) * LaunchSpeed;
 			HitCharacter->LaunchCharacter( LaunchVelocity, true, true );
-			HitCharacter->LoseControl();
+			HitCharacter->LoseControl();*/
 		}
 		else if ( Type == EPlatformType::Bouncer )
 		{

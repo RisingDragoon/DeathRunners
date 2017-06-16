@@ -79,38 +79,47 @@ public:
 
 	void LoseControl();
 
-	//SmashCaricato||void ChargeSmash();
+	void ChargeSmash();
+
+	void StopCharging();
 
 	bool IsFalling;
 
-	//SmashCaricato||bool IsCharging;
+	bool IsCharging;
 
 	//UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
 	//	float SmashCharge = 0;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-	float MaxSmashForce = 450;
-	//SmashCaricato||UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-		//SmashCaricato||float SmashChargeSpeed = 20;
+		float MaxSmashForce = 450;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-	float SmashForceLevel = 350;
+		float SmashChargeSpeed = 20;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
-	float BaseSmashForce = 300;
+		float SmashForceLevel = 350;
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
+		float BaseSmashForce = 300;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 		float DeadZoneUp = 0.4f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 		float DeadZoneDown = -0.4f;
 	float AppliedForce = 0;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		float SpikeLaunchSpeed = 1000;
 	UFUNCTION(BlueprintCallable, Category = "Sounds")
 		virtual void PlaySound();
 
 	UFUNCTION(BlueprintCallable, Category = "Game")
 		void Suicide();
 
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		void Spike();
+
 	void StartFalling();
 
 	void StopFalling();
 
-	void ReceiveShot();
+	UFUNCTION(BlueprintCallable, Category = "Game")
+		void ReceiveShot();
 
 	//void StopSmashing();
 
@@ -229,6 +238,8 @@ protected:
 	bool IsSmashing;
 	
 	bool HasNoHand = false;
+
+
 
 	void SetAnimationIdleNoHand(class UPaperFlipbook* NoHand);
 };
