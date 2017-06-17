@@ -56,13 +56,22 @@ void ABasePlayer::SetSounds(PlayerAnimation animation)
 	switch (animation)
 	{
 	case PlayerAnimation::Smash:
-		SoundComponent->SetSound(SmashAudio);
+		if (SmashAudio)
+		{
+			SoundComponent->SetSound(SmashAudio);
+		}
 		break;
 	case PlayerAnimation::Stun:
-		SoundComponent->SetSound(StunAudio);
+		if (StunAudio)
+		{
+			SoundComponent->SetSound(StunAudio);
+		}
 		break;
 	case PlayerAnimation::JumpStart:
-		SoundComponent->SetSound(JumpAudio);
+		if (JumpAudio)
+		{
+			SoundComponent->SetSound(JumpAudio);
+		}
 		break;
 	case PlayerAnimation::JumpEnd:
 		break;
@@ -79,12 +88,15 @@ void ABasePlayer::SetSounds(PlayerAnimation animation)
 	case PlayerAnimation::DropChangeDirection:
 		break;
 	case PlayerAnimation::Skill:
-		SoundComponent->SetSound(SpecialAbilityAudio);
+		if (SpecialAbilityAudio)
+		{
+			SoundComponent->SetSound(SpecialAbilityAudio);
+		}
 		break;
 	default:
 		break;
 	}
-	PlaySound();
+	//PlaySound();
 }
 
 void ABasePlayer::ChargeSmash()
@@ -238,11 +250,15 @@ void ABasePlayer::StopFalling()
 void ABasePlayer::Spike()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Spikato"));
-	int randomic = FMath::RandRange(-10, 10);
+	StartAnimation(PlayerAnimation::Knock);
+	int min = FMath::RandRange(-SpikeForce, -10);
+	int max = FMath::RandRange(10, SpikeForce);
+
+	int randomic = FMath::RandRange(min, max);
 	//float dir = (randomic) ? 10.0 : -10.0;
 	FVector LaunchVelocity = FVector(randomic, 0.0, 1.0) * SpikeLaunchSpeed;
 	LaunchCharacter(LaunchVelocity, true, true);
-	LoseControl();
+	//LoseControl();
 }
 
 void ABasePlayer::StartAnimation(PlayerAnimation animazione)
@@ -323,6 +339,12 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 			timeOfAnimation = Skill->GetTotalDuration();
 			break;
 		}
+	case PlayerAnimation::Knock:
+		if (Knock)
+		{
+			timeOfAnimation = Knock->GetTotalDuration();
+			break;
+		}
 	case PlayerAnimation::Smaterialize:
 		if (SmaterializeAnimation)
 		{
@@ -364,6 +386,11 @@ void ABasePlayer::EndAnimation()
 		IsOutOfControl = false;
 		SelectedAnimation = PlayerAnimation::Nothing;
 	}
+	else if (SelectedAnimation == PlayerAnimation::Stun)
+	{
+		IsOutOfControl = false;
+		SelectedAnimation = PlayerAnimation::Nothing;
+	}
 	else
 	{
 		SelectedAnimation = PlayerAnimation::Nothing;
@@ -376,7 +403,7 @@ void ABasePlayer::SpecialAbility()
 
 void ABasePlayer::PlaySound()
 {
-	SoundComponent->Play(0.0);
+	//SoundComponent->Play(0.0);
 }
 
 void ABasePlayer::Suicide()
@@ -493,6 +520,12 @@ void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 		if (Skill)
 		{
 			SelectedFlipbook = Skill;
+		}
+		break;
+	case PlayerAnimation::Knock:
+		if (Knock)
+		{
+			SelectedFlipbook = Knock;
 		}
 		break;
 	case PlayerAnimation::Hit:

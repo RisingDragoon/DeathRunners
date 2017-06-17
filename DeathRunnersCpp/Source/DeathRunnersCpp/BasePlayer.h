@@ -27,6 +27,7 @@ enum class PlayerAnimation : uint8
 	Hit,
 	DropChangeDirection,
 	Skill,
+	Knock,
 	Smaterialize, 
 	Materialize,
 	NoHand
@@ -101,6 +102,9 @@ public:
 		float DeadZoneUp = 0.4f;
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = Modificabili)
 		float DeadZoneDown = -0.4f;
+
+		int SpikeForce = 20.0f;
+
 	float AppliedForce = 0;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
@@ -195,6 +199,9 @@ protected:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* Skill;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* Knock;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* NoHandAnimation;
