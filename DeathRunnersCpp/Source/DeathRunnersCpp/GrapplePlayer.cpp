@@ -40,7 +40,7 @@ void AGrapplePlayer::SpecialAbility()
 				UPaperFlipbookComponent* flip = (UPaperFlipbookComponent*)comp;
 				if (flip)
 				{
-					UE_LOG(LogTemp, Warning, TEXT("MANO RUOTATA"));
+					//UE_LOG(LogTemp, Warning, TEXT("MANO RUOTATA"));
 					flip->SetRelativeRotation(FRotator(0,180,0));
 				}
 			}

@@ -31,7 +31,7 @@ void AProjectile::OnBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActo
 	
 	if (HitPlayer != nullptr && gunPlayer==nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Colpito con lo sputo %s"), *OtherActor->GetName());
+		/*UE_LOG(LogTemp, Warning, TEXT("Colpito con lo sputo %s"), *OtherActor->GetName());*/
 		HitPlayer->ReceiveShot();
 	}
 	if (gunPlayer == nullptr)

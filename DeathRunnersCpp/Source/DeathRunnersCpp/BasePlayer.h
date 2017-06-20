@@ -8,29 +8,30 @@
 enum class PlayerAnimation : uint8
 {
 	Nothing,
-	Idle,
-	Running,
-	Jumping,
-	Drop,
-	Falling,
-	Smash,
-	Stun,
-	JumpStart,
-	JumpEnd,
-	RunStart,
-	RunEnd,
+	Idle,//
+	Running,//
+	Jumping,//
+	Drop,//
+	Falling,//
+	Smash,//
+	Stun,//
+	JumpStart,//
+	JumpEnd,//
+	RunStart,//
+	RunEnd,//
 	ChangeDirectionDx,
 	ChangeDirectionSx,
-	Die,
-	RunChangeDirection,
-	JumpChangeDirection,
-	Hit,
-	DropChangeDirection,
-	Skill,
-	Knock,
-	Smaterialize, 
-	Materialize,
-	NoHand
+	Die,//
+	RunChangeDirection,//
+	JumpChangeDirection,//
+	Hit,//
+	DropChangeDirection,//
+	Skill,//
+	Knock,//
+	Smaterialize, //
+	Materialize,//
+	NoHand,
+	AirPuke
 };
 
 UCLASS()
@@ -212,6 +213,9 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
 		class UPaperFlipbook* MaterializeAnimation;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Animations)
+		class UPaperFlipbook* AirPuke;
+
 	//Audio
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Sounds)
 		class UAudioComponent* SoundComponent;
@@ -241,7 +245,7 @@ protected:
 	void MoveRightOrLeft(float value);
 
 	bool IsJumping;
-	bool IsFaceRight;
+	bool IsFaceRight = true;
 	bool IsSmashing;
 	
 	bool HasNoHand = false;

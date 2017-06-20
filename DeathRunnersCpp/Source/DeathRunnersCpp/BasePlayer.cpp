@@ -24,6 +24,12 @@ ABasePlayer::ABasePlayer()
 	capsule->OnComponentEndOverlap.__Internal_AddDynamic(this, &ABasePlayer::ResetPlayerToSmash, FName("ResetPlayerToSmash"));
 	SoundComponent = CreateDefaultSubobject<UAudioComponent>(TEXT("SoundComponent"));
 
+	UCameraComponent* camera = (UCameraComponent*)GetComponentByClass(UCameraComponent::StaticClass());
+	if (camera)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HA UNA CAMERA"));
+	}
+
 	//static ConstructorHelpers::FObjectFinder<UParticleSystem> PS(TEXT("ParticleSystem'/Game/StarterContent/Particles/P_Fire.P_Fire'"));
 	//ParticleSystemCharging = CreateDefaultSubobject<UParticleSystemComponent>(TEXT("MyPSC"));
 	//SoundWave'/Game/Sounds/dr_grab.dr_grab'
@@ -207,7 +213,7 @@ void ABasePlayer::ReceiveShot()
 
 void ABasePlayer::EnableSpecialAbility()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Abilita Pronta"));
+	UE_LOG(LogTemp, Warning, TEXT("%s Abilita Pronta"), *this->GetName());
 	SpecialAbilityIsReady = true;
 }
 
@@ -222,6 +228,7 @@ void ABasePlayer::StartFalling()
 		UE_LOG(LogTemp, Warning, TEXT("PUGNO CARICATO"));
 		if (GetCapsuleComponent())
 		{
+			UE_LOG(LogTemp, Warning, TEXT("Stato Collisioni Falling"));
 			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Falling"));
 		}
 		else
@@ -242,7 +249,7 @@ void ABasePlayer::StartFalling()
 void ABasePlayer::StopFalling()
 {
 	GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
-	UE_LOG(LogTemp, Warning, TEXT("stop falling"));
+	UE_LOG(LogTemp, Warning, TEXT("Stop falling"));
 	IsOutOfControl = false;
 	IsFalling = false;
 }
@@ -357,6 +364,36 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 			timeOfAnimation = MaterializeAnimation->GetTotalDuration();
 			break;
 		}
+	case PlayerAnimation::Idle:
+		if (Idle)
+		{
+			timeOfAnimation = Idle->GetTotalDuration();
+			break;
+		}
+	case PlayerAnimation::Running:
+		if (Running)
+		{
+			timeOfAnimation = Running->GetTotalDuration();
+			break;
+		}
+	case PlayerAnimation::Drop:
+		if (Dropping)
+		{
+			timeOfAnimation = Dropping->GetTotalDuration();
+			break;
+		}
+	case PlayerAnimation::Falling:
+		if (Falling)
+		{
+			timeOfAnimation = Falling->GetTotalDuration();
+			break;
+		}
+	case PlayerAnimation::AirPuke:
+		if (AirPuke)
+		{
+			timeOfAnimation = AirPuke->GetTotalDuration();
+			break;
+		}
 	}
 	if (SelectedAnimation != animazione)
 	{
@@ -365,10 +402,6 @@ void ABasePlayer::StartAnimation(PlayerAnimation animazione)
 		UE_LOG(LogTemp, Warning, TEXT("StartAnimation"));
 		GetWorld()->GetTimerManager().SetTimer(TimerEndAnimation, this, &ABasePlayer::EndAnimation, timeOfAnimation, false);
 	}
-	else
-	{
-		UE_LOG(LogTemp, Warning, TEXT("SelectedAnimation == animazione"));
-	}
 }
 
 void ABasePlayer::EndAnimation()
@@ -376,13 +409,13 @@ void ABasePlayer::EndAnimation()
 	UE_LOG(LogTemp, Warning, TEXT("EndAnimation"));
 	if (SelectedAnimation == PlayerAnimation::Smaterialize)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Teleport"));
+		//UE_LOG(LogTemp, Warning, TEXT("Teleport"));
 		SetActorLocation(LocationToTeleport);
 		StartAnimation(PlayerAnimation::Materialize);
 	}
 	else if (SelectedAnimation == PlayerAnimation::Materialize)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("materializza"));
+		//UE_LOG(LogTemp, Warning, TEXT("materializza"));
 		IsOutOfControl = false;
 		SelectedAnimation = PlayerAnimation::Nothing;
 	}
@@ -552,6 +585,12 @@ void ABasePlayer::GetFlipbookByAnimation(PlayerAnimation animation)
 			SelectedFlipbook = NoHandAnimation;
 		}
 		break;
+	case PlayerAnimation::AirPuke:
+		if (AirPuke)
+		{
+			SelectedFlipbook = AirPuke;
+		}
+		break;
 	}
 }
 
@@ -643,7 +682,12 @@ void ABasePlayer::UpdateCharacter()
 	}
 	if (PlayerVelocity.Z > 0.0f)
 	{
-		GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));
+		if (GetCapsuleComponent()->GetCollisionProfileName() != "Jumping")
+		{
+			//UE_LOG(LogTemp, Warning, TEXT("Jumping"));
+			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Jumping"));
+		}
+
 	}
 	else if (!IsFalling)
 	{
@@ -652,7 +696,22 @@ void ABasePlayer::UpdateCharacter()
 		
 		if (overlappingPlatforms.Num() == 0)
 		{
-			GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+			if (GetCapsuleComponent()->GetCollisionProfileName() != "Pawn")
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("SET pawn"));
+				GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+			}
+		}
+	}
+	else if (IsFalling)
+	{
+		if (AppliedForce <= SmashForceLevel)
+		{
+			if (GetCapsuleComponent()->GetCollisionProfileName() != "Pawn")
+			{
+				//UE_LOG(LogTemp, Warning, TEXT("Pawn da falling dopo pugno base"));
+				GetCapsuleComponent()->SetCollisionProfileName(TEXT("Pawn"));
+			}
 		}
 	}
 }

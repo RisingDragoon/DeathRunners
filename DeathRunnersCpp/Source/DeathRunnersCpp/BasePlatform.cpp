@@ -30,23 +30,18 @@ void ABasePlatform::Tick(float DeltaTime)
 void ABasePlatform::OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit )
 {
 	ABasePlayer* HitCharacter = Cast<ABasePlayer>( OtherActor );
-
 	if ( HitCharacter != NULL && HitCharacter->GetActorLocation().Z > GetActorLocation().Z + 32.0 )
 	{
+		//UE_LOG(LogTemp, Warning, TEXT("%s ha sbattuto dall'alto"), *OtherActor->GetName());
 		if (HitCharacter->IsFalling)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("ha sbattuto qundi Lose control"));
-
+			UE_LOG(LogTemp, Warning, TEXT("Ha sbattuto quando era in falling qundi ->Lose control"));
 			HitCharacter->LoseControl();
 		}
 
 		if ( Type == EPlatformType::Spikes )
 		{
 			HitCharacter->Spike();
-			/*float dir = HitCharacter->GetActorLocation().X > GetActorLocation().X ? 1.0 : -1.0;
-			FVector LaunchVelocity = FVector( dir, 0.0, 1.0 ) * LaunchSpeed;
-			HitCharacter->LaunchCharacter( LaunchVelocity, true, true );
-			HitCharacter->LoseControl();*/
 		}
 		else if ( Type == EPlatformType::Bouncer )
 		{
