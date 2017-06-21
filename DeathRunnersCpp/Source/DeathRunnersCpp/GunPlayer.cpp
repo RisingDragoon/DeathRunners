@@ -19,24 +19,24 @@ void AGunPlayer::SetupPlayerInputComponent(class UInputComponent* playerInputCom
 void AGunPlayer::StartAnimationShot()
 {
 	float timeOfAnimation = 0;
-	if (IsJumping)
-	{
-		if (AirPuke)
-		{
-			timeOfAnimation = AirPuke->GetTotalDuration();
-			SelectedAnimation = PlayerAnimation::AirPuke;
-			UE_LOG(LogTemp, Warning, TEXT("GunPlayer- Animazione AirPuke durata= %d"), timeOfAnimation);
-		}
-	}
-	else
-	{
+	//if (IsJumping)
+	//{
+	//	if (AirPuke)
+	//	{
+	//		timeOfAnimation = AirPuke->GetTotalDuration();
+	//		SelectedAnimation = PlayerAnimation::AirPuke;
+	//		UE_LOG(LogTemp, Warning, TEXT("GunPlayer- Animazione AirPuke durata= %d"), timeOfAnimation);
+	//	}
+	//}
+	//else
+	//{
 		if (Skill)
 		{
 			timeOfAnimation = Skill->GetTotalDuration();
 			SelectedAnimation = PlayerAnimation::Skill;
 			UE_LOG(LogTemp, Warning, TEXT("GunPlayer- Animazione Skill durata= %d"),timeOfAnimation);
 		}
-	}
+	//}
 	GetWorld()->GetTimerManager().SetTimer(TimerEndAnimation, this, &AGunPlayer::EndAnimationShot, timeOfAnimation, false);
 }
 
