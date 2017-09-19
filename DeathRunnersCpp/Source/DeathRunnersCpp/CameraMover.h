@@ -20,6 +20,8 @@ public:
 	
 	// Called every frame
 	virtual void TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction ) override;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		bool canMove = true;
 
 private:
 	UPROPERTY( EditAnywhere, Category = "Movement" )
@@ -30,4 +32,5 @@ private:
 
 	UPROPERTY( EditAnywhere, Category = "Movement" )
 	float maxSpeed;
+
 };

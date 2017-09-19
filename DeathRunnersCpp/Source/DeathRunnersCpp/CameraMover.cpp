@@ -19,7 +19,10 @@ void UCameraMover::BeginPlay()
 void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction )
 {
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
-	
+	if (!canMove)
+	{
+		return;
+	}
 	ADeathRunnersCppGameMode* gameMode = (ADeathRunnersCppGameMode*)GetWorld()->GetAuthGameMode();
 	TArray<ABasePlayer*> characters = gameMode->GetPlayers();//BasePlayer in game
 

@@ -140,7 +140,8 @@ public:
 
 	FVector LocationToTeleport = FVector(0, 0, 0);
 	
-	bool IsOutOfControl = false;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = Modificabili)
+		bool IsOutOfControl = false;
 
 protected:
 
