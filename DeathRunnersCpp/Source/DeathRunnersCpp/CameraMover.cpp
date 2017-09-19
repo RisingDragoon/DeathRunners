@@ -21,10 +21,10 @@ void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 	Super::TickComponent( DeltaTime, TickType, ThisTickFunction );
 	
 	ADeathRunnersCppGameMode* gameMode = (ADeathRunnersCppGameMode*)GetWorld()->GetAuthGameMode();
-	TArray<ABasePlayer*> characters = gameMode->GetPlayers();
+	TArray<ABasePlayer*> characters = gameMode->GetPlayers();//BasePlayer in game
 
 	float averageZ = 0;
-
+	//fa la media delle Z dei player
 	if ( characters.Num() != 0 )
 	{
 		for ( auto item : characters )
@@ -37,7 +37,7 @@ void UCameraMover::TickComponent( float DeltaTime, ELevelTick TickType, FActorCo
 
 		averageZ /= characters.Num();
 	}
-
+	//Aggiusta la velocità
 	float speedFactor = (( averageZ - GetOwner()->GetActorLocation().Z ) / 1080.0 ) + 0.5;
 	float speed = FMath::Lerp( minSpeed, maxSpeed, speedFactor );
 

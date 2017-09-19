@@ -32,13 +32,11 @@ void ABasePlatform::OnHit( UPrimitiveComponent* HitComponent, AActor* OtherActor
 	ABasePlayer* HitCharacter = Cast<ABasePlayer>( OtherActor );
 	if ( HitCharacter != NULL && HitCharacter->GetActorLocation().Z > GetActorLocation().Z + 32.0 )
 	{
-		//UE_LOG(LogTemp, Warning, TEXT("%s ha sbattuto dall'alto"), *OtherActor->GetName());
+		//Se è in Falling significa che il player è stato smashato quindi perde i controlli
 		if (HitCharacter->IsFalling)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Ha sbattuto quando era in falling qundi ->Lose control"));
 			HitCharacter->LoseControl();
 		}
-
 		if ( Type == EPlatformType::Spikes )
 		{
 			HitCharacter->Spike();

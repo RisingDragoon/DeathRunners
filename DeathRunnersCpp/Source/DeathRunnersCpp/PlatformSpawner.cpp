@@ -16,11 +16,6 @@ APlatformSpawner::APlatformSpawner()
 	{
 		spawnPoints.Add( FVector( x, 0.0, 0.0 ) );
 	}
-
-	/*for ( auto item : spawnPoints )
-	{
-		UE_LOG( LogTemp, Warning, TEXT( "I detected a spawner" ) );
-	}*/
 }
 
 void APlatformSpawner::BeginPlay()
@@ -51,9 +46,6 @@ void APlatformSpawner::SpawnPlatforms( float z )
 		params.Owner = this;
 		params.Instigator = Instigator;
 
-		// Seleziona un pattern casuale con cui spawnare le piattaforme.
-		// int randPattern = FMath::RandRange( 0, spawnPatterns.Num() - 1 );
-
 		TArray<bool> pattern = GeneratePattern();
 
 		int specialPos = -1;
@@ -62,7 +54,7 @@ void APlatformSpawner::SpawnPlatforms( float z )
 		{
 			do
 			{
-				specialPos = FMath::RandRange( 0, spawnPoints.Num() - 1 );
+				specialPos = FMath::RandRange( 0, spawnPoints.Num() - 1 );//Da 0 a 3
 			} while ( !pattern[specialPos] );
 		}
 
@@ -70,15 +62,16 @@ void APlatformSpawner::SpawnPlatforms( float z )
 		{
 			if ( pattern[col] )
 			{
+				//Aggiunge un offset sulla x per spawnarla nella colonna
 				FVector spawnLocation = FVector( 0.0, 0.0, z ) + spawnPoints[col];
 				TSubclassOf<ABasePlatform> toSpawn = normalPlatform;
-
+				//Sceglie la piattaforma se è speciale
 				if ( col == specialPos )
 				{
 					int rand = FMath::RandRange( 0, specialPlatforms.Num() - 1 );
 					toSpawn = specialPlatforms[rand];
 				}
-
+				//Spawna
 				world->SpawnActor<ABasePlatform>( toSpawn, spawnLocation, FRotator::ZeroRotator, params );
 			}
 		}

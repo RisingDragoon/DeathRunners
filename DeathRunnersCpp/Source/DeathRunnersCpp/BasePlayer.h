@@ -8,28 +8,28 @@
 enum class PlayerAnimation : uint8
 {
 	Nothing,
-	Idle,//
-	Running,//
-	Jumping,//
-	Drop,//
-	Falling,//
-	Smash,//
-	Stun,//
-	JumpStart,//
-	JumpEnd,//
-	RunStart,//
-	RunEnd,//
+	Idle,
+	Running,
+	Jumping,
+	Drop,
+	Falling,
+	Smash,
+	Stun,
+	JumpStart,
+	JumpEnd,
+	RunStart,
+	RunEnd,
 	ChangeDirectionDx,
 	ChangeDirectionSx,
-	Die,//
-	RunChangeDirection,//
-	JumpChangeDirection,//
-	Hit,//
-	DropChangeDirection,//
-	Skill,//
-	Knock,//
-	Smaterialize, //
-	Materialize,//
+	Die,
+	RunChangeDirection,
+	JumpChangeDirection,
+	Hit,
+	DropChangeDirection,
+	Skill,
+	Knock,
+	Smaterialize,
+	Materialize,
 	NoHand,
 	AirPuke
 };

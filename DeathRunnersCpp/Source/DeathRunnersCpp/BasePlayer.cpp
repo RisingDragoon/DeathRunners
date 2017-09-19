@@ -179,10 +179,8 @@ void ABasePlayer::SetAnimationIdleNoHand(UPaperFlipbook * NoHand)
 
 void ABasePlayer::ThrowSmash()
 {
-	UE_LOG(LogTemp, Warning, TEXT("ThrowSmash"));
 	if (IsJumping)
 	{
-		//StopCharging();
 		StartAnimation(PlayerAnimation::Smash);
 		SetSounds(PlayerAnimation::Smash);
 
@@ -190,12 +188,6 @@ void ABasePlayer::ThrowSmash()
 		{
 			if (PlayerToSmash->IsJumping)
 			{
-				UE_LOG(LogTemp, Warning, TEXT("Potenza pugno : SmashForce= %f "), SmashForce);
-				//if (SmashForce < BaseSmashForce)
-				//{
-				//	//Applica la forza minima
-				//	SmashForce = BaseSmashForce;
-				//}
 				PlayerToSmash->AppliedForce = SmashForce;
 				PlayerToSmash->StartFalling();
 			}
